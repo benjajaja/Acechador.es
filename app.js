@@ -11,7 +11,7 @@ PLANNED:
 var user = 0;
 var production = false;
 var port = 8888;
-var cacheTag = '2011072503';
+var cacheTag = '2011072600';
 
 for(var i = 0; i < process.argv.length; i++) {
 	if (process.argv[i] == "-u") {

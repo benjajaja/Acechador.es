@@ -232,9 +232,6 @@ ul.dotted {
 		-moz-transform-origin: left bottom;
 		-moz-transform:rotate(90deg) translate(-80px,-10px);
 	}
-	.logo span {
-		letter-spacing: -8px;
-	}
 /*#backcard*/ #ocho {
 	font: 256px Citon,Arial,Verdana,sans-serif;
 	line-height: 200px;
@@ -246,12 +243,13 @@ ul.dotted {
 	font: 64px Citon,Arial,Verdana,sans-serif;
 }
 	.logo span {
-		letter-spacing: -1em;
+		letter-spacing: -8px;
 	}
 #leftpanel {
 	position: absolute;
 	width: 200px;
 	margin: 0 10px;
+	top: 0;
 }
 	#leftpanel .box {
 		margin-top: 10px;
@@ -748,6 +746,7 @@ ul.dotted {
 	}
 
 .pages {
+	overflow: hidden;
 }
 	.pages a {
 		display: block;
@@ -896,6 +895,9 @@ ul.dotted {
 }
 
 @media screen and (max-width: 800px), screen and (max-device-width: 480px) {
+	#as {
+		display: none;
+	}
 	#card {
 		margin-left: 20px;
 	}
@@ -911,10 +913,11 @@ ul.dotted {
 	}
 	.small-screen {
 		display: block;
-		float: right;
-		margin: 120px 50px 0 0;
-		font-size: 2.5em !important;
 	}
+		.logo.small-screen {
+			text-align: center;
+			margin: 30px 0 0 0;
+		}
 }
 @media screen and (max-width: 480px), screen and (max-device-width: 480px) {
 	#card {
