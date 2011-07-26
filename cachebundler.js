@@ -3,7 +3,7 @@ var cacheTag = '0';
 var fs = require('fs');
 var styleSheets = ['stylesheet.css'];//, 'stylesheet_light.css', 'stylesheet_heavy.css'];
 
-var scripts = ['achelper.js', 'auth.js', 'comment.js', 'dialog.js',
+var scripts = ['adsense.js', 'achelper.js', 'auth.js', 'comment.js', 'dialog.js',
 	'loadinghint.js', 'loginoffer.js', 'preview.js', 'skel.js',
 	'submit.js', 'touchpad.js', 'votes.js',
 	'jquery-1.6.2.min.js', 'jquery.cookie.js', 'openid-jquery.js', 'jquery.placeholder.js', 'jquery.scrollTo-min.js',
