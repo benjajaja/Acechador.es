@@ -1,0 +1,43 @@
+<h1>Enviar un enlace</h1>
+<form method="post" action="submit/" class="submit" id="submit">
+  <fieldset>
+    <label>
+      URL:
+      <input type="url" name="url" value="${form.url}" placeholder="http://" required />
+    </label>
+	</fieldset>
+  <fieldset>
+    <label>
+      Título:
+      <input type="text" name="title" value="${form.title}" placeholder="Escribe un titular" required />
+    </label>
+  </fieldset>
+  <fieldset>
+    <label>
+      Remitente:
+      {{if login}}
+      	<input type="text" name="unused"
+      		value="${login.name}" readonly title="Desconecta para enviar como otro usuario" />
+      {{else}}
+      <input type="text" name="submitter" placeholder="Estepano" />
+      {{/if}}
+    </label>
+    {{if login}}{{else}}
+    	{{partial 'submitter_register'}}
+    {{/if}}
+
+  </fieldset>
+  <fieldset>
+    <label>
+      Rincón:
+      <select name="category">
+	  {{each(id, category) categories}}
+		<option value="${id}"{{if form.category == id}} selected="selected"{{/if}}>${category}</option>
+		{{/each}}
+      </select>
+    </label>
+  </fieldset>
+	<button type="submit">
+	  Enviar
+	</button>
+</form>

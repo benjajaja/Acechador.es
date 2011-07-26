@@ -1,0 +1,56 @@
+<div class="links">
+{{if links}}
+	{{each(i, link) links}}
+	<h3>
+		{{if link.video_site == 2}}
+		<span class="thumb">
+			<img src="${urls.static}/img/videos/thumb_${link.id}.jpg?id=${link.video_ref}" alt=""
+			{{if link.thumbnail_width && link.thumbnail_height}}width="${link.thumbnail_width}" height="${link.thumbnail_height}"{{/if}}
+			/>
+		</span>
+		{{/if}}
+		<a href="${link.url}"
+		  {{if link.video_site == 2}}
+			rel="youtube ${link.video_ref}"
+		  {{else link.video}}
+			rel="video"
+		  {{/if}}
+		  class="link">
+			${link.name}<!--|linktitle:$link.flags-->
+		</a>
+		<span class="link_actions">
+			<span class="submitter">
+				enviado
+				${link.antiquity}
+				por
+				{{if link.submitter_type == 2}}
+				<a href="/u/${link.username}" class="go">${link.username}</a>
+				{{else}}
+				${link.submitter}
+				{{/if}}
+			</span>
+			en
+			<span class="go">${link.category_name}</span>
+			{{if !link.single}}
+				<a href="/r/${link.category_ref}/${link.alphaid}/${link.ref}/" class="go actions">
+					${link.comments.length} {{if link.comments.length == 1}}comentario{{else}}comentarios{{/if}} &#9658;
+				</a>
+				
+			{{/if}}
+			<span class="plusone" id="plusone-{$link.id}"></span>
+		</span>
+		
+		<span class="floatbreak"></span>
+	</h3>
+	{{/each}}
+
+{{else}}
+	<h3>Parece que por aquí no hay na</h3>
+{{/if}}
+</div>
+
+<div class="pages">
+{{each(index, value) pages}}
+	<a href="/pag/${value.num}/"{{if value.active}} class="active"{{/if}} title="&#36${value.num};"><span>${value.num}</span></a>
+{{/each}}
+</div>

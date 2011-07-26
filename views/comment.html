@@ -1,0 +1,19 @@
+<div class="comment">
+	{{if image}}
+	<a class="image target_blank" href="${image.href}" style="width: ${image.width}px">
+		<img src="${image.src}" width="${image.width}" height="${image.height}" alt="${image.filename}" />
+	</a>
+	{{/if}}
+	
+	{{if username}}
+	<a class="em" href="u/${username}">${username}</a>
+	{{else submitter_ref}}
+	<span class="em">${submitter_ref}</span>
+	{{/if}}
+	
+	<span class="em">${antiquity}</span>
+	<div class="comment_text">
+		${comment}
+	</div>
+	<div class="floatbreak"></div>
+</div>

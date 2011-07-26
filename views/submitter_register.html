@@ -1,0 +1,41 @@
+<div id="login">
+ 	<input type="hidden" name="islogin" value="1" />
+	<button type="button" onclick="LoginOffer.toggleRegister(this)">
+		Cambiar a "hacer cuenta nueva"
+	</button>
+  	<h3>
+  		¿Estás registrado?
+  	</h3>
+  	<div id="login_login">
+  		<div class="left">
+			  <label>
+			  	Contraseña:
+			  	<input type="password" name="password" disabled="disabled" />
+			  </label>
+			  <label class="registerOnly">
+			  	Repítela:
+			  	<input type="password" name="password2" disabled="disabled" />
+			  </label>
+		</div>
+		<div class="right">
+			  <label>
+			  	<input type="checkbox" name="keep" value="1" disabled="disabled" checked="checked" />
+			  	No cerrar mi sesión
+			  </label>
+			  <label class="registerOnly">
+			  	Dirección de correo:
+			  	<input type="email" name="email" disabled="disabled" value="" placeholder="bill@microsoft.com" />
+			  	<span>...opcional, para que puedas regenerar tu contraseña</span>
+			  </label>
+		</div>
+  	</div>
+  	<div class="loginInfo floatbreak">
+		El login o el registro se efectúan en el mismo paso del envío
+	</div>
+	<div class="loginInfo">
+		Deja estos campos en blanco si quieres enviar anónimo... ¡cobarde!
+	</div>
+	<div class="loginInfo">
+	<a href="privacidad" target="_blank">Haz click aquí para ver de qué manera protegemos tus datos (abre una ventana nueva)</a>
+	</div>
+</div>

@@ -1,0 +1,142 @@
+<div class="links">
+
+
+	<h3>
+		<!--<span class="votes">
+			<button class="up">
+				&#9824;
+			</button>
+			<button class="down">
+				&#9824;
+			</button>
+		</span>-->
+		{{if link.video_site == 2}}
+		<span class="thumb">
+			<img src="/img/videos/thumb_${link.id}.jpg?id=${link.video_ref}" alt=""
+			{{if link.thumbnail_width && link.thumbnail_height}}width="${link.thumbnail_width}" height="${link.thumbnail_height}"{{/if}}
+			/>
+		</span>
+		{{/if}}
+		<a href="${link.url}"
+		  {{if link.video_site == 2}}
+			rel="youtube ${link.video_ref}"
+		  {{else link.video}}
+			rel="video"
+		  {{/if}}
+		  class="link">
+			${link.name}<!--|linktitle:$link.flags-->
+		</a>
+		<span class="link_actions">
+			<span class="submitter">
+				enviado
+				${link.antiquity}
+				por
+				{{if link.submitter_type == 2}}
+				<a href="/u/${link.username}" class="go">${link.username}</a>
+				{{else}}
+				${link.submitter}
+				{{/if}}
+			</span>
+			en
+			<span class="go">${link.category_name}</span>
+			{{if !link.single}}
+				<a href="/r/${link.category_ref}/${link.alphaid}/${link.ref}/" class="go actions">
+					${link.comments.length} {{if link.comments.length == 1}}comentario{{else}}comentarios{{/if}} &#9658;
+				</a>
+				
+			{{/if}}
+			
+			{{if login}}{{if login.isAdmin}}
+			| <a class="admin" href="/admin/delete/link/${link.id}">Eliminar</a>
+			{{/if}}{{/if}}
+			
+			<span class="plusone" id="plusone-{$link.id}"></span>
+		</span>
+		
+		<span class="floatbreak"></span>
+	</h3>
+</div>
+
+<div class="comments">
+{{each(i, comment) link.comments}}
+	<div class="comment">
+		{{if image}}
+		<a class="image target_blank" href="/${image.href}" style="width: ${image.width}px">
+			<img src="/${image.src}" width="${image.width}"/>
+		</a>
+		{{/if}}
+		
+		{{if username}}
+		<a class="em" href="/u/${username}">${username}</a>
+		{{else}}
+		<span class="em">
+		${submitterName}
+		</span>
+		{{/if}}
+		
+		<span class="em">${antiquity}</span>
+		<div class="comment_text">
+			{{html comment}}
+		</div>
+		<div class="floatbreak"></div>
+	</div>
+{{/each}}
+
+
+
+
+
+
+	<div id="postcomment">
+		<form method="post" action="r/${link.category.ref}/${link.ref}/#comment" class="submit" id="submit" onsubmit="return false">
+			<fieldset>
+				<input type="hidden" name="link" value="${link.id}" />
+		    	<label>
+		      		Nombre:
+		      		{{if login}}
+			      		<input type="text" name="submitter"
+			      			value="${login.name}" readonly title="Desconecta para enviar como otro usuario" />
+			      	{{else}}
+			      		<input type="text" name="submitter"
+			      			placeholder="Estepano" />
+			      	{{/if}}
+		    	</label>
+		    	{{if login}}
+    				{{partial "submitter_register"}}
+    			{{/if}}
+		  	</fieldset>
+			<fieldset>
+		    	<label>
+		      		Comentario:
+		      		<textarea cols="48" rows="4" name="comment" placeholder="${commentPlaceholder}"></textarea>
+		      		<span class="info">
+		      			Si pegas una dirección luego se convierte automácamente en enlace
+		      		</span>
+		    	</label>
+		  	</fieldset>
+		  	<fieldset>
+		  		<label>
+		  			Imagen:
+		  			<span id="dropbox" class="input">
+		  				Puedes arrastrar y soltar el archivo aquí
+		  				<input type="file" name="img" style="display: block" />
+						<!--<button type="button" id="dropbox-url">
+							O seleccionar URL...
+						</button>-->
+						<button type="button" id="dropbox-open">
+							O seleccionar archivo...
+						</button>
+						<!--<button type="button" id="dropbox-edit" disabled>
+							Editar la imagen seleccionada en modo interactivo
+						</button>-->
+		  			</span>
+					<span class="info" id="dropboxstatus">No has seleccionado ningún archivo</span>
+		  		</label>
+		  	</fieldset>
+			<button type="submit" onclick="Comments.comment($(this.parentNode))">
+				Responder
+			</button>
+		</form>
+	</div>
+
+</div>

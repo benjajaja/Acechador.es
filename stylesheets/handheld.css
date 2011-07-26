@@ -1,0 +1,19 @@
+
+#card {
+	margin-left: 20px;
+}
+#view {
+	margin-left: 10px;
+}
+#leftpanel {
+	position: relative;
+	width: auto;	
+}
+#backcard {
+	display: none !important;
+}
+.small-screen {
+	display: block;
+	float: right;
+	margin:120px 50px 0 0;
+}

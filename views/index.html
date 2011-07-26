@@ -1,0 +1,115 @@
+<!doctype html>
+<html lang="es">
+<head>
+	<meta charset="utf-8"/>
+	<title>${title}</title>
+	<link rel="stylesheet" type="text/css" href="/stylesheet_${styleSheetCacheVersion}.css" media="screen"/>
+	<link rel="shortcut icon" href="/favicon.ico" />
+	<link href="/rss.xml" type="application/rss+xml" rel="alternate" title="RSS ATOM Feed" />
+</head>
+
+<div id="body">
+
+	<div id="page">
+		<div id="backcard" class="card" onclick="this.parentNode.removeChild(this)">
+			<div id="ocho">8</div>
+			<h1 class="logo">Acechado<span>r</span>.es</h1>
+			<!--<div id="mouse">&spades;</div>-->
+		</div>
+
+		<div id="card" class="card">
+			<div id="leftpanel">
+				<h1 class="logo small-screen">Acechado<span>r</span>.es</h1>
+				<h1 id="as">
+					<a href="${urls.base}/" id="as-link">
+						A
+					</a>
+				</h1>
+				
+				<div class="box submit_go">
+					<a href="/submit" class="button">Enviar un enlace</a>
+				</div>
+
+				{{if login}}
+				<div class="box login">
+					<label>Conectado como <a href="u/${login.name}" class="profile">${login.name}</a></label>
+					<a class="button" href="/logout">Desconectar</a>
+				</div>
+				{{else}}
+				<form class="box login" action="/login" method="post">
+					<input type="text" placeholder="usuario" name="name" />
+					<input type="password" placeholder="contraseña" name="password" />
+					<button type="submit" title="Hacer login">
+						&#8629;
+					</button>
+					<label>
+						<input type="checkbox" name="keep" value="1" checked="checked" />
+						No cerrar mi sesión
+					</label>
+				</form>
+				{{/if}}
+
+				<form class="box search" action="/search" method="get">
+					<input type="text" placeholder="Buscar" name="q" />
+					<button type="submit" title="Enviar búsqueda">
+						&#8629;
+					</button>
+				</form>
+
+				<div class="box">
+				 <h3>Sabías que...</h3>
+				 <p>{{html tip}}</p>
+				</div>
+				
+				<div class="box sociallinks">
+					<label>Enlaces <a href="http://{$baseurl}/">acechadores</a></label>
+					<div>
+						<a href="/rss.xml">rss</a>
+						| <a href="http://www.google.com/profiles/acechadores.com#buzz">buzz</a>
+						| <a href="http://www.facebook.com/pages/acechadores/140730482607080">facebook</a>
+					</div>
+				</div>
+				
+				<div class="box">
+					<label>
+						Navegación touchpad:
+						<span style="display: block">
+							<input type="checkbox" id="touchpad"/>
+							Abrir en una pestaña nueva
+						</span>
+					</label>
+				</div>
+				<div id="blingbling"></div>
+
+
+
+			</div>
+			
+			<div id="view">
+			{{if pageTemplate}}
+			{{partial pageTemplate}}
+			{{/if}}
+
+			</div>
+
+
+		</div>
+		<div class="floatbreak"></div>
+		<div id="bunny"></div>
+	</div>
+
+
+
+<div id="footer">
+  <h2>
+    &copy; 2010 LA BANDICA GESTIONA FUERTE
+  </h2>
+  <a href="mailto:admin@acechador.es">admin@acechador.es</a>
+  | <a href="changelog/?2011-07-13" class="changelog">ver registro de cambios</a>
+</div>
+
+<div class="floatbreak"></div>
+</div>
+<script>(function(){var f=function(s,e){var a=document.createElement('script');a.type = 'text/javascript';a.async = true;if(s){a.src=s;}else{a.innerHTML=e;}document.body.appendChild(a);};f('/javascript_${styleSheetCacheVersion}.js');f(null, 'window.addEventListener("load",function(){Touchpad.load();$("input[placeholder]").placeholder();{{if onload}}{{each(index, eval) onload}}{{html eval}}{{/each}}{{/if}}});');})();</script>
+
+</html>

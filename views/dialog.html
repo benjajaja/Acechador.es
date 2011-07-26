@@ -1,0 +1,28 @@
+<div class="dialog{{if dialog.className}} ${dialog.className}{{/if}}">
+	<h2>
+		{{if dialog.icon}}
+		<span class="icon">{{html dialog.icon}}</span>
+		{{/if}}
+		${dialog.title}
+	</h2>
+	<p>${dialog.message}</p>
+	
+	{{if dialog.confirm}}
+	<a href="${dialog.confirm.yes.action}" class="button">
+		${dialog.confirm.yes.label}
+	</a>
+	&nbsp;
+	<a href="${dialog.action}" class="button">
+		${dialog.confirm.no.label}
+	</a>
+	{{else dialog.action}}
+	<a href="${dialog.action}" class="button">
+		${dialog.buttonLabel}
+	</a>
+	{{else dialog.buttonLabel}}
+	<button type="button">
+		${dialog.buttonLabel}
+	</button>
+	{{/if}}
+	
+</div>
