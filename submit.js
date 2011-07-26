@@ -4,7 +4,7 @@
 
 module.exports = function(app, layout, db) {
 	var getCategories = function(callback) {
-		db.query().select(['ref', 'name']).from('ac_categories').execute(function(err, rows) {
+		db.getCategories(function(err, rows) {
 			if (err) throw err;
 			var categories = {};
 			for(var i = 0; i < rows.length; i++) {

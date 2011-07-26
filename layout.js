@@ -109,7 +109,7 @@ module.exports = function(options, session) {
 		if (req.session && req.session.user) {
 			globals.login = {
 				name: req.session.user.name,
-				isAdmin: req.session.user.level === require('./session').USER_LEVEL_ADMIN
+				isAdmin: req.session.user.level === require('./session')().USER_LEVEL_ADMIN
 			};
 		}
 

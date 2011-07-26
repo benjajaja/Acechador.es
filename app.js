@@ -82,13 +82,13 @@ var db = require('./db')({
 	user: 'acechadores',
 	password: 'acechante',
 	database: 'acechadores',
-	charset: 'utf8',
-	callback: function(err) {
+	charset: 'utf8'
+	},
+	function(err) {
 	
 		if (err) throw err;
 	
-		var session = require('./session');
-		session.start(express, app, db);
+		var session = require('./session')(db);
 		
 		var layout = require('./layout')({
 			domains: {
@@ -110,7 +110,7 @@ var db = require('./db')({
 
 		require('./link')(app, layout, db);
 
-		require('./login')(app, layout, db);
+		require('./login')(app, layout);
 
 		require('./submit')(app, layout, db);
 
@@ -128,8 +128,7 @@ var db = require('./db')({
 		app.listen(port);
 		console.log("Express server listening on port %d", app.address().port);
 		
-	}
-});
+	});
 
 
 

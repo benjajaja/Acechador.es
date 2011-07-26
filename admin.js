@@ -1,7 +1,7 @@
 module.exports = function(app, layout, db) {
 
 	app.all('/admin/setimagesizes', layout.handle(function(req, res, next) {
-		if (!req.session.user || req.session.user.level !== require('./session').USER_LEVEL_ADMIN) {
+		if (!req.session.user || req.session.user.level !== require('./session')().USER_LEVEL_ADMIN) {
 			layout.showDialogError(req, res, {message: 'Aqui no hay nada. ¡Venga fuera de aqui!'});
 			
 		} else {
@@ -58,7 +58,7 @@ module.exports = function(app, layout, db) {
 	}));
 
 	app.all('/admin/setids', layout.handle(function(req, res, next) {
-		if (!req.session.user || req.session.user.level !== require('./session').USER_LEVEL_ADMIN) {
+		if (!req.session.user || req.session.user.level !== require('./session')().USER_LEVEL_ADMIN) {
 			layout.showDialogError(req, res, {message: 'Aqui no hay nada. ¡Venga fuera de aqui!'});
 			
 		} else {
@@ -101,7 +101,7 @@ module.exports = function(app, layout, db) {
 	}));
 
 	app.all('/admin/delete/:type/:id/?', layout.handle(function(req, res, next) {
-		if (!req.session.user || req.session.user.level !== require('./session').USER_LEVEL_ADMIN) {
+		if (!req.session.user || req.session.user.level !== require('./session')().USER_LEVEL_ADMIN) {
 			layout.showDialogError(req, res, {message: 'Aqui no hay nada. ¡Venga fuera de aqui!'});
 			
 		} else {

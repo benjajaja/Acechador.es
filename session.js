@@ -1,10 +1,19 @@
 var db = null;
 
-exports.USER_LEVEL_USER = 1;
-exports.USER_LEVEL_ADMIN = 2;
 
-exports.start = function(express, app, gdb) {
-	db = gdb;
+module.exports = function(gdb) {
+	if (gdb) {
+		db = gdb;
+	}
+	return {
+		login: login,
+		logout: logout,
+		getUserName: getUserName,
+		register: register,
+		isLogged: isLogged,
+		USER_LEVEL_USER: 1,
+		USER_LEVEL_ADMIN: 2
+	};
 };
 
 var getHash = function(name, password) {
@@ -14,7 +23,7 @@ var getHash = function(name, password) {
 	return Hash.sha1(name+password+'cowswithgunskajdhasi8462398aksjdhaosie0928347iuasdgfashgdkjashdFUCKYOUaslkdjalsid');
 };
 
-exports.login = function(name, password, keep, isHashed, req, callback) {
+var login = function(name, password, keep, isHashed, req, callback) {
 	var lifetime = keep ? 31536000 : null;
 	
 	if (!name || name.length == 0 || !password || password.length == 0) {
@@ -25,10 +34,7 @@ exports.login = function(name, password, keep, isHashed, req, callback) {
 		password = getHash(name, password);
 	}
 	
-	
-	
-	db.query().select(['id', 'name', 'level', 'token']).from('ac_users').where('name = ? AND hash = ?', [name, password]).limit(1)
-			.execute(function(err, rows) {
+	db.getUser(name, password, function(err, rows) {
 		delete req.session.user;
 		if (err) {
 			callback("query error: "+err);
@@ -54,16 +60,16 @@ var regenerateSession = function(req, user, lifetime, callback) {
 	});
 };
 
-exports.logout = function(req, callback) {
+var logout = function(req, callback) {
 	delete req.session.user;
 	req.session.regenerate(callback);
 }
 
-exports.getUserName = function(session) {
+var getUserName = function(session) {
 	return session.user ? session.user.name : 'desconocido';
 };
 
-exports.register = function(name, password, keep, email, isHashed, req, callback) {
+var register = function(name, password, keep, email, isHashed, req, callback) {
 	if (name.length < 1) {
 		callback("El nombre de usuario debe contener al menos una letra, señor misterioso");
 	} else if (name.match(/[^a-zA-Z0-9-_]/) !== null) {
@@ -71,14 +77,11 @@ exports.register = function(name, password, keep, email, isHashed, req, callback
 	} else if (password.length < 1) {
 		callback("Tienes que poner una contraseña");
 	} else {
-		db.query().select(['id']).from('ac_users').where('name = ?', [name]).limit(1).execute(function(err, rows) {
+		db.getUsers(name, function(err, rows) {
 			if (err || rows.length > 0) {
 				callback("Ese nombre de usuario ya está registrado.");
 			} else {
-				db.query().insert('ac_users',
-						['name', 'hash', 'email', 'level', 'timestamp_registered', 'token'],
-						[name, getHash(name, password), email, 1, new Date(), '0'])
-					.execute(function(err, result) {
+				db.createUser(name, getHash(name, password), email, function(err, result) {
 					if (err) {
 						callback(err);
 						
@@ -97,6 +100,6 @@ exports.register = function(name, password, keep, email, isHashed, req, callback
 	}
 };
 
-exports.isLogged = function(session) {
+var isLogged = function(session) {
 	return typeof session.user != "undefined" && session.user.id > 0;
 };

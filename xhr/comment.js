@@ -69,10 +69,8 @@ module.exports = function(app, session, db) {
 	});
 	
 	var comment = function(link, user, text, imagedata, callback) {
-		db.query().insert('ac_comments',
-				['link', 'comment', 'submitter_type', 'submitter_ref', 'parent', 'timestamp'],
-				[link, text, user.type, (user.type === userpost.USER_ANONYMOUS ? user.name : user.id), 0, new Date()])
-			.execute(function(err, result) {
+		db.createComment(link, text, user.type, (user.type === userpost.USER_ANONYMOUS ? user.name : user.id),
+				function(err, result) {
 			if (err) {
 				callback(err, null);
 				
@@ -131,10 +129,8 @@ module.exports = function(app, session, db) {
 								} else {
 									size = stats.size;
 								}
-								db.query().insert('ac_images',
-											['origin', 'parent', 'filename', 'width', 'height', 'thumb_width', 'thumb_height', 'timestamp', 'size', 'data'],
-											[1, id, 'canvas', features.width, features.height, thumbFeatures.width, thumbFeatures.height, new Date(), size, ''])
-										.execute(function(err, result) {
+								db.createImage(1, id, 'canvas', features.width, features.height, thumbFeatures.width, thumbFeatures.height, size,
+										function(err, result) {
 									if (err) {
 										console.log('cannot insert row: '+err);
 										fs.unlink(tmpfile, callback);
