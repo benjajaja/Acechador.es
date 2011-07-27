@@ -11,6 +11,7 @@ module.exports = function(app, layout, db) {
 		var from = getFromParam(req.params.from);
 		
 		require('./linklistprovider')(db).getLinks({
+				user: (req.session.user && req.session.user.id ? req.session.user.id : null),
 				from: from,
 				page: page
 			}, function(rows, pages) {
@@ -21,6 +22,7 @@ module.exports = function(app, layout, db) {
 					pages: pages,
 					onload: [
 						'Preview.load();',
+						'Votes.load();',
 						//'PlusOne.load();'
 					]
 				});

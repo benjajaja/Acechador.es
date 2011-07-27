@@ -11,25 +11,25 @@ Dialog = {
 		if (typeof json.dialog.buttonLabel == "undefined") {
 			json.dialog.buttonLabel = "Vale";
 		}
-		Dialog.el = Skel.fetch("dialog", json);
-		var btn = Dialog.el.find('button');
+		var el = Skel.fetch("dialog", json);
+		var btn = el.find('button');
 		if (btn) {
 			if (callback) {
 				btn.click(callback);
 			} else {
-				btn.click(Dialog.clear);
+				btn.click(function() {
+					el.fadeOut(0.5, function() {
+						el.replaceWith(replace);
+					});
+				});
 			}
 		}
-		var parent = replace.parent();
+		replace.before(el);
 		replace.detach();
-		parent.append(Dialog.el);
-		Dialog.replace = replace;
 	},
 	clear: function() {
 		Dialog.el.fadeOut(0.5, function() {
-			var parent = Dialog.el.parent();
-			Dialog.el.remove();
-			parent.append(Dialog.replace);
+			Dialog.el.replaceWith(Dialog.replace);
 			Dialog.el = null;
 			Dialog.replace = null;
 		});

@@ -28,13 +28,14 @@ module.exports = function(app, layout, db) {
 	app.get('/r/:category/:id/:ref/?', layout.handle({
 		handle: function(req, res) {
 			var ref = req.params.ref;
-			db.getLink(req.params.id, function(err, link) {
+			db.getLink(req.params.id, (req.session.user && req.session.user.id ? req.session.user.id : null),
+					function(err, link) {
 				if (err || !link || link.length != 1 || !link[0].id) {
 					layout.showDialogError(req, res, {
 						message: 'Enlace no encontrado'
 					});
 				} else {
-					var onload = ['Comments.attach($("#submit"));'];
+					var onload = ['Comments.attach($("#submit"));', 'Votes.load();'];
 					if (!layout.session.isLogged(req.session)) {
 						onload.push('LoginOffer.attach($("#login"), $("#postcomment").find("input[name=submitter]"));');
 					}

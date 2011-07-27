@@ -18,7 +18,9 @@ module.exports = function(app, layout) {
 				if (extension && ['.jpg', '.png'].indexOf(extension) !== -1) {
 					res.send('not found', 404);
 				} else {
-					res.render('error');
+					require('fs').readFile(__dirname + '/views/error.html', function(err, data) {
+						res.send(data, 404);
+					});
 				}
 			} else {
 				res.header('Cache-Control', 'max-age=2592000, must-revalidate');

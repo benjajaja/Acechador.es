@@ -12,7 +12,9 @@ module.exports = function(gdb) {
 		register: register,
 		isLogged: isLogged,
 		USER_LEVEL_USER: 1,
-		USER_LEVEL_ADMIN: 2
+		USER_LEVEL_ADMIN: 2,
+		USER_ANONYMOUS: 1,
+		USER_REGISTERED: 2
 	};
 };
 

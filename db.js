@@ -15,7 +15,7 @@ module.exports = function db(options, callback) {
 		}
 	});
 
-	return {
+	var o = {
 		query: function() {
 			console.log("WARNING: deprecated call to db.query()");
 			return db.query();
@@ -36,15 +36,24 @@ module.exports = function db(options, callback) {
 					.execute(callback);
 		},
 
-		getLinks: function(filter, limit, callback) {
-			var query = db.query().select(['ac_links.*', {'username': 'ac_users.name'}, {'video_site': 'ac_videos.site'}, 
+		getLinks: function(filter, limit, user, callback) {
+			var fields = ['ac_links.*', {'username': 'ac_users.name'}, {'video_site': 'ac_videos.site'}, 
 					{'video_ref': 'ac_videos.ref'}, {'category_name': 'ac_categories.name'}, {'category_ref': 'ac_categories.ref'},
-					{'thumbnail_width': 'ac_videos.thumbnail_width'}, {'thumbnail_height': 'ac_videos.thumbnail_height'}
-					])
+					{'thumbnail_width': 'ac_videos.thumbnail_width'}, {'thumbnail_height': 'ac_videos.thumbnail_height'},
+					{'votes': 'ac_votes_totals.total'}
+				];
+			if (user) {
+				fields.push({'vote': 'ac_votes.vote'});
+			}
+			var query = db.query().select(fields)
 					.from('ac_links')
 					.join({'type': 'LEFT', 'table': 'ac_users', 'conditions': 'ac_links.submitter_type = ? AND ac_users.id = ac_links.submitter'}, [2])
 					.join({'type': 'LEFT', 'table': 'ac_videos', 'conditions': 'ac_videos.type = ? AND ac_videos.id = ac_links.id'}, [1])
-					.join({'type': 'LEFT', 'table': 'ac_categories', 'conditions': 'ac_categories.id = ac_links.category'});
+					.join({'type': 'LEFT', 'table': 'ac_categories', 'conditions': 'ac_categories.id = ac_links.category'})
+					.join({'type': 'LEFT', 'table': 'ac_votes_totals', 'conditions': 'ac_votes_totals.type = ? AND ac_votes_totals.id = ac_links.id'}, [1]);
+			if (user) {
+				query.join({'type': 'LEFT', 'table': 'ac_votes', 'conditions': 'ac_votes.type = ? AND ac_votes.id = ac_links.id AND ac_votes.user = ?'}, [1, user]);
+			}
 			applyFilter(query, filter);
 			query.order({'timestamp': false, 'id': false});
 			query.limit(limit[0], limit[1]);
@@ -60,19 +69,27 @@ module.exports = function db(options, callback) {
 			query.execute(callback);
 		},
 
-		getLink: function(alphaid, callback) {
-			db.query().select(['ac_links.*', {'username': 'ac_users.name'}, {'video_site': 'ac_videos.site'}, 
+		getLink: function(alphaid, user, callback) {
+			var fields = ['ac_links.*', {'username': 'ac_users.name'}, {'video_site': 'ac_videos.site'}, 
 					{'video_ref': 'ac_videos.ref'}, {'category_name': 'ac_categories.name'}, {'category_ref': 'ac_categories.ref'},
-					{'thumbnail_width': 'ac_videos.thumbnail_width'}, {'thumbnail_height': 'ac_videos.thumbnail_height'}
-					])
+					{'thumbnail_width': 'ac_videos.thumbnail_width'}, {'thumbnail_height': 'ac_videos.thumbnail_height'},
+					{'votes': 'ac_votes_totals.total'}
+				];
+			if (user) {
+				fields.push({'vote': 'ac_votes.vote'});
+			}
+			var query = db.query().select(fields)
 					.from('ac_links')
 					.join({'type': 'LEFT', 'table': 'ac_users', 'conditions': 'ac_links.submitter_type = ? AND (ac_users.id = ac_links.submitter OR ac_users.name = ac_links.submitter)'}, [2])
 					.join({'type': 'LEFT', 'table': 'ac_videos', 'conditions': 'ac_videos.type = ? AND ac_videos.id = ac_links.id'}, [1])
 					.join({'type': 'LEFT', 'table': 'ac_categories', 'conditions': 'ac_categories.id = ac_links.category'})
-					.where('ac_links.alphaid = ?', [alphaid])
-					.order({'timestamp': false, 'id': false})
-					.limit(1)
-					.execute(callback);
+					.join({'type': 'LEFT', 'table': 'ac_votes_totals', 'conditions': 'ac_votes_totals.type = ? AND ac_votes_totals.id = ac_links.id'}, [1]);
+			if (user) {
+				query.join({'type': 'LEFT', 'table': 'ac_votes', 'conditions': 'ac_votes.type = ? AND ac_votes.id = ac_links.id AND ac_votes.user = ?'}, [1, user]);
+			}
+			query.where('ac_links.alphaid = ?', [alphaid])
+			.limit(1)
+			.execute(callback);
 		},
 		getComments: function (id, callback) {
 			db.query().select(['ac_comments.*', {'username': 'ac_users.name'}, {'image_id': 'ac_images.id'},
@@ -83,6 +100,21 @@ module.exports = function db(options, callback) {
 				.join({'type': 'LEFT', 'table': 'ac_images', 'conditions': 'ac_images.origin = ? AND ac_images.parent = ac_comments.id'}, [1])
 				.where('link = ?', [id])
 				.execute(callback);
+		},
+		getLinkId: function(alphaid, callback) {
+			db.query().select(['id'])
+					.from('ac_links')
+					.where('ac_links.alphaid = ?', [alphaid])
+					.limit(1)
+					.execute(function(err, rows) {
+						if (err) {
+							callback(err);
+						} else if (rows.length === 0) {
+							callback('no rows returned');
+						} else {
+							callback(null, rows[0].id);
+						}
+					});
 		},
 
 		getCategories: function(callback) {
@@ -156,8 +188,112 @@ module.exports = function db(options, callback) {
 				['origin', 'parent', 'filename', 'width', 'height', 'thumb_width', 'thumb_height', 'timestamp', 'size', 'data'],
 				[origin, id, filename, width, height, thumbWidth, thumbHeight, new Date(), size, ''])
 			.execute(callback);
+		},
+
+		hasVoted: function(user, type, alphaid, callback) {
+			o.getLinkId(alphaid, function(err, id) {
+				if (err) {
+					callback(err);
+				} else {
+					// id type ups downs user
+					db.query().select(['id', 'vote']).from('ac_votes')
+					.where('type = ? AND user = ? AND id = ?', [type, user, id])
+					.limit(1)
+					.execute(function(err, rows) {
+						if (err) {
+							callback(err);
+						} else if (rows.length === 0) {
+							callback(null, false, null, id);
+						} else {
+							callback(null, true, rows[0].vote, id);
+						}
+					});
+					
+				}
+			});
+		},
+		
+		getVoteCount: function() {
+			var type = arguments[0], id = arguments[1];
+			if (arguments.length == 3) {
+				var update = false;
+				var callback = arguments[2];
+			} else {
+				var update = arguments[2];
+				var callback = arguments[3];
+			}
+			
+			if (update) {
+				db.query().select([{'total': 'SUM(vote)'}]).from('ac_votes').where('type = ? AND id = ?', [type, id]).execute(function(err, rows) {
+					if (err) {
+						callback(err);
+					
+					} else {
+						var total = (rows.length > 0 && rows[0].total !== null) ? rows[0].total : 0;
+						db.query().insert('ac_votes_totals', ['type', 'id', 'total'], [type, id, total]).execute(function(err, result) {
+							if (err) {
+								db.query().update('ac_votes_totals').set({total: total}).where('type = ? AND id = ?', [type, id])
+								.execute(function(err, result) {
+									if (err) {
+										callback(err);
+									} else {
+										console.log('vote totals UPDATED: '+total);
+										callback(null, total);
+									}
+								});
+							} else {
+								callback(null, total);
+							}
+						});
+						
+					}
+				});
+			} else {
+				db.query().select(['total']).from('ac_votes_totals').where('type = ? AND id = ?', [type, id]).execute(function(err, rows) {
+					if (err) {
+						callback(err);
+					} else {
+						callback(null, rows.length > 0 ? rows[0].total : 0);
+					}
+				});
+			}
+		},
+		createVote: function(user, type, id, vote, callback) {
+			db.query().insert('ac_votes', ['id', 'type', 'user', 'vote'], [id, type, user, vote])
+			.execute(function(err, result) {
+				if (err) {
+					callback(err);
+				} else {
+					o.getVoteCount(type, id, true, callback);
+					
+				}
+			});
+		},
+		changeVote: function(user, type, id, vote, callback) {
+			db.query().update('ac_votes').set({vote: vote})
+			.where('type = ? AND id = ? AND user = ?', [type, id, user])
+			.execute(function(err, result) {
+				if (err) {
+					callback(err);
+				} else {
+					o.getVoteCount(type, id, true, callback);
+					
+				}
+			});
+		},
+		clearVote: function(user, type, id, callback) {
+			db.query().delete().from('ac_votes').where('type = ? AND id = ? AND user = ?', [type, id, user])
+			.execute(function(err, result) {
+				if (err) {
+					callback(err);
+				} else {
+					o.getVoteCount(type, id, true, callback);
+					
+				}
+			});
 		}
 	};
+	return o;
 };
 
 var applyFilter = function(query, filter) {

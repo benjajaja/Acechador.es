@@ -2,6 +2,15 @@
 {{if links}}
 	{{each(i, link) links}}
 	<h3>
+		<span class="votes" data-voted="none" data-link="${link.alphaid}">
+			<span class="arrow up{{if link.vote === 1}} voted{{/if}}" title="¿Gestión fuerte?">
+				&#9824;
+			</span>
+			<span class="count">${link.votes}</span>
+			<!--<span class="arrow down{{if link.vote === -1}} voted{{/if}}">
+				&#9824;
+			</span>-->
+		</span>
 		{{if link.video_site == 2}}
 		<span class="thumb">
 			<img src="${urls.static}/img/videos/thumb_${link.id}.jpg?id=${link.video_ref}" alt=""

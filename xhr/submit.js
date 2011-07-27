@@ -110,10 +110,18 @@ var submit = function(url, title, user, category, callback) {
 			callback(err, null);
 			
 		} else {
-			addVideoLink(id, url, function() {
-				callback(null, '/r/'+escapeUrl(category.ref)+'/'+hash+'/'+ref);
-			});
 			
+			if (user.type === userpost.USER_REGISTERED) {
+				db.createVote(user.id, 1, id, 1, function(err) {
+					addVideoLink(id, url, function() {
+						callback(null, '/r/'+escapeUrl(category.ref)+'/'+hash+'/'+ref);
+					});
+				});
+			} else {
+				addVideoLink(id, url, function() {
+					callback(null, '/r/'+escapeUrl(category.ref)+'/'+hash+'/'+ref);
+				});
+			}
 		}
 	});
 	

@@ -11,7 +11,7 @@ PLANNED:
 var user = 0;
 var production = false;
 var port = 8888;
-var cacheTag = '2011072600';
+var cacheTag = '2011072700';
 
 for(var i = 0; i < process.argv.length; i++) {
 	if (process.argv[i] == "-u") {
@@ -88,8 +88,6 @@ var db = require('./db')({
 	
 		if (err) throw err;
 	
-		var session = require('./session')(db);
-		
 		var layout = require('./layout')({
 			domains: {
 				www: 'acechador.es',
@@ -97,7 +95,7 @@ var db = require('./db')({
 			},
 			cacheTag: cacheTag,
 			production: production
-		}, session);
+		}, require('./session')(db));
 
 
 		// Routes
@@ -117,6 +115,8 @@ var db = require('./db')({
 		require('./xhr/submit')(app, layout.session, db);
 		
 		require('./xhr/comment')(app, layout.session, db);
+
+		require('./xhr/vote')(app, layout.session, db);
 		
 		require('./rss')(app, db);
 		
