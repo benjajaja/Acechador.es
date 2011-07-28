@@ -110,29 +110,53 @@ var submit = function(url, title, user, category, callback) {
 			callback(err, null);
 			
 		} else {
-			
+			var href = '/r/'+category.ref+'/'+hash+'/'+ref;
+			callback(null, href);
+
 			if (user.type === userpost.USER_REGISTERED) {
-				db.createVote(user.id, 1, id, 1, function(err) {
-					addVideoLink(id, url, function() {
-						callback(null, '/r/'+escapeUrl(category.ref)+'/'+hash+'/'+ref);
-					});
-				});
-			} else {
-				addVideoLink(id, url, function() {
-					callback(null, '/r/'+escapeUrl(category.ref)+'/'+hash+'/'+ref);
-				});
+				db.createVote(user.id, 1, id, 1);
 			}
+			addVideoLink(id, url, function(err) {
+				
+				if (err) {
+					console.log(err);
+				}
+				
+				/*var fb = require('../modules/facebook');
+				fb.accessToken('105797889471287', 'cc03e4f1e198f45214616aa73e62a39a',
+						function(err, accessToken) {
+					if (!err) {
+						var post = {
+							name: title,
+							link: layout.urls.base+href,
+							caption: 'enviado por '+user.name,
+							message: ''
+						};
+						
+						if (isVideo) {
+							post.picture = layout.urls.static+'/img/videos/thumb_'+id+'.jpg';
+						}
+
+						fb.publish('acechador.es', post, function(err, id) {
+							if (err) {
+								console.log(err);
+							}
+						});
+					}
+				});*/
+			});
+
+			
 		}
 	});
 	
 };
 
 
-var addVideoLink = function(id, url, callback) {
+var addVideoLink = function(id, url, cb) {
 	var matches = url.match(/^(.*)?youtube.com\/(v\/|watch\?v=)([A-Za-z0-9_\-]+)/);
 	if (matches === null) {
-		console.log('not a youtube link');
-		callback();
+		cb('not a youtube link');
 		
 	} else {
 		console.log('getting youtube thumbnail');
@@ -141,12 +165,12 @@ var addVideoLink = function(id, url, callback) {
 			db.createLinkVideo(id, TYPE_LINK, VIDEO_YOUTUBE, matches[3], thumbnail.width, thumbnail.height,
 					function(err, result) {
 				if (err) {
-					console.log("Could not insert video link: "+err+' on query: '+db.query().insert('ac_videos', ['id', 'type', 'site', 'ref'], [id, TYPE_LINK, VIDEO_YOUTUBE, matches[3]]).sql());
+					cb('Could not insert video link');
+				} else {
+					cb();
 				}
-				callback();
 				
 			});
-			
 		});
 		
 		

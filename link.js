@@ -30,7 +30,7 @@ module.exports = function(app, layout, db) {
 			var ref = req.params.ref;
 			db.getLink(req.params.id, (req.session.user && req.session.user.id ? req.session.user.id : null),
 					function(err, link) {
-				if (err || !link || link.length != 1 || !link[0].id) {
+				if (err) {
 					layout.showDialogError(req, res, {
 						message: 'Enlace no encontrado'
 					});
@@ -39,11 +39,11 @@ module.exports = function(app, layout, db) {
 					if (!layout.session.isLogged(req.session)) {
 						onload.push('LoginOffer.attach($("#login"), $("#postcomment").find("input[name=submitter]"));');
 					}
-					if (link[0].video_site == 2) { //FIXME: use constant
+					if (link.video_site == 2) { //FIXME: use constant
 						onload.push('Preview.load(true);');
 					}
 					
-					getComments(link[0], function(link) {
+					getComments(link, function(link) {
 						layout.render(req, res, {
 							pageTemplate: 'page_link',
 							link: link,

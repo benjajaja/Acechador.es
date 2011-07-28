@@ -10,7 +10,7 @@ module.exports = function(app, layout, db) {
 		var page = req.params.page > 0 ? req.params.page - 1: 0;
 		var from = getFromParam(req.params.from);
 		
-		require('./linklistprovider')(db).getLinks({
+		require('./modules/linklistprovider')(db).getLinks({
 				user: (req.session.user && req.session.user.id ? req.session.user.id : null),
 				from: from,
 				page: page

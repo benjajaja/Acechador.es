@@ -1,7 +1,7 @@
 module.exports = function(app, layout, db) {
 	app.get('/search/?', function(req, res, next) {
 		if (req.query.q) {
-			require('./linklistprovider')(db).getLinks({
+			require('./modules/linklistprovider')(db).getLinks({
 					filter: {
 						fields: ['name'],
 						value: req.query.q || ''

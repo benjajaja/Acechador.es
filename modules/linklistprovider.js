@@ -1,14 +1,11 @@
-
-
-
 module.exports = function(db) {
 	return {
 		getLinks: function(options, callback) {
 			options = options || {};
 			options.page = options.page || 0;
-			var pageLimit = 25;
+			options.limit = options.limit || 25;
 
-			db.getLinks(options.filter, [pageLimit * options.page, pageLimit], options.user ? options.user : null,
+			db.getLinks(options.filter, [options.limit * options.page, options.limit], options.user ? options.user : null,
 					function(err, links) {
 				if (err) {
 					console.log(err);
@@ -29,7 +26,7 @@ module.exports = function(db) {
 						} else {
 							db.getLinkCount(options.filter, function(err, count) {
 								if (err) throw err;
-								var count = Math.ceil(count[0].count / pageLimit);
+								var count = Math.ceil(count[0].count / options.limit);
 								var pages = [];
 								for(var i = 0; i < count; i++) {
 									pages.push({num: i+1, active: i == options.page});

@@ -1,6 +1,6 @@
 module.exports = function(app, db) {
 	var handle = function(req, res, next){
-		require('./linklistprovider')(db).getLinks({
+		require('./modules/linklistprovider')(db).getLinks({
 				page: 0
 			}, function(rows) {
 			

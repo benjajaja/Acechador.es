@@ -77,7 +77,7 @@ app.configure(function(){
 
 
 
-var db = require('./db')({
+var db = require('./modules/db')({
 	hostname: 'localhost',
 	user: 'acechadores',
 	password: 'acechante',
@@ -88,14 +88,14 @@ var db = require('./db')({
 	
 		if (err) throw err;
 	
-		var layout = require('./layout')({
+		var layout = require('./modules/layout')({
 			domains: {
 				www: 'acechador.es',
 				static: 'static.acechadores.com',
 			},
 			cacheTag: cacheTag,
 			production: production
-		}, require('./session')(db));
+		}, require('./modules/session')(db));
 
 
 		// Routes
@@ -127,6 +127,13 @@ var db = require('./db')({
 
 		app.listen(port);
 		console.log("Express server listening on port %d", app.address().port);
+		
+		var cron = require('cron');
+		new cron.CronJob('0 0 11,23 * * *', require('./modules/cronjobs/facebook')(db, layout, {
+			appid: '105797889471287',
+			appsecret: 'cc03e4f1e198f45214616aa73e62a39a',
+			pageid: 'acechador.es'
+		}).run);
 		
 	});
 

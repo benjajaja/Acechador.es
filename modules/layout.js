@@ -83,14 +83,16 @@ module.exports = function(options, session) {
 	var o = {
 		session: session
 	};
+
+	o.urls = {
+		base: 'http://' + options.domains.www,
+		static: 'http://' + options.domains.static
+	};
 	
 	var globals = function(req, override) {
 		var globals = {
 			styleSheetCacheVersion: options.cacheTag,
-			urls: {
-				base: 'http://' + options.domains.www,
-				static: 'http://' + options.domains.static
-			},
+			urls: o.urls,
 			title: 'Acechador.es',
 			tip: tips[Math.floor(Math.random() * (tips.length - 1))]
 			

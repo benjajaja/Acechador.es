@@ -65,11 +65,20 @@ module.exports = function db(options, callback) {
 		},
 		getLinkCount: function(filter, callback) {
 			var query = db.query().select([{'count': 'COUNT(id)'}]).from('ac_links');
-			applyFilter(query, filter);
+			if (filter) {
+				applyFilter(query, filter);
+			}
 			query.execute(callback);
 		},
 
-		getLink: function(alphaid, user, callback) {
+		getLink: function() {
+			var alphaid = arguments[0];
+			if (arguments.length == 2) {
+				var callback = arguments[1];
+			} else {
+				var user = arguments[1];
+				var callback = arguments[2];
+			}
 			var fields = ['ac_links.*', {'username': 'ac_users.name'}, {'video_site': 'ac_videos.site'}, 
 					{'video_ref': 'ac_videos.ref'}, {'category_name': 'ac_categories.name'}, {'category_ref': 'ac_categories.ref'},
 					{'thumbnail_width': 'ac_videos.thumbnail_width'}, {'thumbnail_height': 'ac_videos.thumbnail_height'},
@@ -89,7 +98,13 @@ module.exports = function db(options, callback) {
 			}
 			query.where('ac_links.alphaid = ?', [alphaid])
 			.limit(1)
-			.execute(callback);
+			.execute(function(err, rows) {
+				if (err || !rows || rows.length != 1 || !rows[0].id) {
+					callback(err);
+				} else {
+					callback(null, rows[0]);
+				}
+			});
 		},
 		getComments: function (id, callback) {
 			db.query().select(['ac_comments.*', {'username': 'ac_users.name'}, {'image_id': 'ac_images.id'},
@@ -175,6 +190,9 @@ module.exports = function db(options, callback) {
 				[id, type, site, ref, width, height])
 			.execute(callback);
 		},
+		updateLink: function(id, set, callback) {
+			var query = db.query().update('ac_links').set(set).where('id = ?', [id]).execute(callback);
+		},
 
 		createComment: function(link, text, type, ref, callback) {
 			db.query().insert('ac_comments',
@@ -189,6 +207,7 @@ module.exports = function db(options, callback) {
 				[origin, id, filename, width, height, thumbWidth, thumbHeight, new Date(), size, ''])
 			.execute(callback);
 		},
+
 
 		hasVoted: function(user, type, alphaid, callback) {
 			o.getLinkId(alphaid, function(err, id) {

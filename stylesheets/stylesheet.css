@@ -487,11 +487,16 @@ ul.dotted {
 	  .links .votes .count {
 		display: block;
 		width: 20px;
+		height: 12px;
+		border: 1px solid #999;
 		line-height: 12px;
 		color: #666;
 		text-align: center;
 		font-size: 0.6em;
 		font-weight: bold;
+		border-radius: 2px;
+		-moz-border-radius: 2px;
+		background-color: #fff;
 	  }
 	  .links .votes .arrow {
 		display: block;

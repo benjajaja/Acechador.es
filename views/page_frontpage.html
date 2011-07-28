@@ -6,7 +6,7 @@
 			<span class="arrow up{{if link.vote === 1}} voted{{/if}}" title="¿Gestión fuerte?">
 				&#9824;
 			</span>
-			<span class="count">${link.votes}</span>
+			<span class="count">{{if link.votes !== null}}${link.votes}{{else}}&bull;{{/if}}</span>
 			<!--<span class="arrow down{{if link.vote === -1}} voted{{/if}}">
 				&#9824;
 			</span>-->

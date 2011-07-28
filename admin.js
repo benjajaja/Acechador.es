@@ -1,7 +1,53 @@
 module.exports = function(app, layout, db) {
+	app.all('/admin/publish/:alphaid', layout.handle(function(req, res, next) {
+		if (!req.session.user || req.session.user.level !== require('./modules/session')().USER_LEVEL_ADMIN) {
+			layout.showDialogError(req, res, {message: 'Aqui no hay nada. ¡Venga fuera de aqui!'});
+			
+		} else {
+			require('./modules/linkprovider')(db).getLink(req.params.alphaid, function(err, link) {
+				var fb = require('./modules/facebook');
+
+				fb.accessToken('105797889471287', 'cc03e4f1e198f45214616aa73e62a39a',
+						function(err, accessToken) {
+					if (err) {
+						res.send(err);
+					} else {
+						
+						var post = {
+							name: link.name,
+							link: layout.urls.base+link.href,
+							caption: 'enviado por ',
+							message: ''
+						};
+						
+						if (link.submitter_type == 2) {
+							post.caption += link.username;
+						} else {
+							post.caption += link.submitter;
+						}
+						//post.message += ' en '
+
+						if (link.video_site == 2) {
+							post.picture = layout.urls.static+'/img/videos/thumb_'+link.id+'.jpg';
+						}
+
+						fb.publish('acechador.es', post, function(err, id) {
+							if (err) {
+								res.send(err);
+							} else {
+								res.send('published: '+id);
+							}
+						});
+					}
+				});
+
+
+			});
+		};
+	}));
 
 	app.all('/admin/setimagesizes', layout.handle(function(req, res, next) {
-		if (!req.session.user || req.session.user.level !== require('./session')().USER_LEVEL_ADMIN) {
+		if (!req.session.user || req.session.user.level !== require('./modules/session')().USER_LEVEL_ADMIN) {
 			layout.showDialogError(req, res, {message: 'Aqui no hay nada. ¡Venga fuera de aqui!'});
 			
 		} else {
@@ -58,7 +104,7 @@ module.exports = function(app, layout, db) {
 	}));
 
 	app.all('/admin/setids', layout.handle(function(req, res, next) {
-		if (!req.session.user || req.session.user.level !== require('./session')().USER_LEVEL_ADMIN) {
+		if (!req.session.user || req.session.user.level !== require('./modules/session')().USER_LEVEL_ADMIN) {
 			layout.showDialogError(req, res, {message: 'Aqui no hay nada. ¡Venga fuera de aqui!'});
 			
 		} else {
@@ -101,7 +147,7 @@ module.exports = function(app, layout, db) {
 	}));
 
 	app.all('/admin/delete/:type/:id/?', layout.handle(function(req, res, next) {
-		if (!req.session.user || req.session.user.level !== require('./session')().USER_LEVEL_ADMIN) {
+		if (!req.session.user || req.session.user.level !== require('./modules/session')().USER_LEVEL_ADMIN) {
 			layout.showDialogError(req, res, {message: 'Aqui no hay nada. ¡Venga fuera de aqui!'});
 			
 		} else {
@@ -171,14 +217,35 @@ module.exports = function(app, layout, db) {
 											console.log('could not delete video image', err);
 										}
 										
-										db.query().delete().from('ac_links').where('id = ?', [id]).execute(function(err, rows) {
-											if (err) {
-												callback(err, 'Error al borrar datos del enlace');
-												
-											} else {
-												callback(null, 'Enlace y dependencias eliminados');
-												
+										db.query().select(['fbpost']).from('ac_links').where('id = ?', [id]).execute(function(err, rows) {
+										
+											if (rows[0].fbpost !== null) {
+												try {
+													var fb = require('../facebook');
+													fb.accessToken(options.appid, options.appsecret,
+															function(err, accessToken) {
+														if (!err) {
+															fb.delete(accessToken, rows[0].fbpost, function(err) {
+																if (err) {
+																	console.log(err);
+																}
+															});
+														}
+													});
+												} catch (e) {
+													console.log('exception when deleting facebook post', e);
+												}
 											}
+										
+											db.query().delete().from('ac_links').where('id = ?', [id]).execute(function(err, rows) {
+												if (err) {
+													callback(err, 'Error al borrar datos del enlace');
+													
+												} else {
+													callback(null, 'Enlace y dependencias eliminados');
+													
+												}
+											});
 										});
 									});
 								
