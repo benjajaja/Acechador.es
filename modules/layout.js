@@ -131,7 +131,11 @@ module.exports = function(options, session) {
 		data = data || null;
 		var timeStart = new Date().getTime();
 		res.render('index', globals(req, data), function(err, data) {
-			if (err) throw err;
+			if (err) {
+				res.send('<pre>Error: '+err+'\n'+err.stack);
+				console.log(err.toString(), err.stack);
+				return;
+			}
 			
 			if (typeof req.query.mini != 'undefined') {
 				gzip(minify(data, {

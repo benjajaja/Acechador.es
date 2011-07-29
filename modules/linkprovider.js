@@ -32,7 +32,7 @@ module.exports = function(db) {
                         if (typeof options == 'string') {
                                 options = {'alphaid': options};
                         }
-                        db.getLink(options.alphaid, function(err, link) {
+                        db.getLink(options.alphaid, options.user, function(err, link) {
                                 if (err) {
                                         console.log(err);
                                         callback(err, []);
@@ -41,6 +41,11 @@ module.exports = function(db) {
                                         link.antiquity = formatter.antiquity(link.timestamp);
 
                                         link.href = '/r/'+link.category_ref+'/'+link.alphaid+'/'+link.ref;
+										
+										if (link.fbpost) {
+											var split = link.fbpost.split('_');
+											link.fbpost = {page: split[0], post: split[1]};
+										}
 
                                         if (options.comments) {
                                                 getComments(link, callback);
