@@ -21,10 +21,28 @@ module.exports = function db(options, callback) {
 			return db.query();
 		},
 
-		getUser: function(name, password, callback) {
-			db.query().select(['id', 'name', 'level', 'token']).from('ac_users')
-				.where('name = ? AND hash = ?', [name, password]).limit(1)
-				.execute(callback);
+		getUser: function() {
+			var name = arguments[0];
+			if (arguments.length == 3) {
+				var password = arguments[1];
+				var callback = arguments[2];
+				db.query().select(['id', 'name', 'level', 'token']).from('ac_users')
+					.where('name = ? AND hash = ?', [name, password]).limit(1)
+					.execute(callback);
+			} else {
+				var callback = arguments[1];
+				db.query().select(['id', 'name', 'email', 'level', 'timestamp_registered']).from('ac_users').where('name = ?', [name])
+				.execute(function(err, rows) {
+					if (err) {
+						cb(err);
+						console.log(db.query().select(['id', 'name', 'email', 'level', 'timestamp_registered']).from('ac_users').where('name = ?', [name]).sql(), name);
+					} else if (!rows || !rows.length || rows.length == 0) {
+						cb('User not found');
+					} else {
+						cb(null, rows[0]);
+					}
+				});
+			}
 		},
 		getUsers: function(name, callback) {
 			db.query().select(['id']).from('ac_users').where('name = ?', [name]).limit(1).execute(callback);
@@ -314,20 +332,6 @@ module.exports = function db(options, callback) {
 				} else {
 					o.getVoteCount(type, id, true, callback);
 					
-				}
-			});
-		},
-		
-		getUser: function(name, cb) {
-			db.query().select(['id', 'name', 'email', 'level', 'timestamp_registered']).from('ac_users').where('name = ?', [name])
-			.execute(function(err, rows) {
-				if (err) {
-					cb(err);
-					console.log(db.query().select(['id', 'name', 'email', 'level', 'timestamp_registered']).from('ac_users').where('name = ?', [name]).sql(), name);
-				} else if (!rows || !rows.length || rows.length == 0) {
-					cb('User not found');
-				} else {
-					cb(null, rows[0]);
 				}
 			});
 		}
