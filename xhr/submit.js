@@ -114,36 +114,15 @@ var submit = function(url, title, user, category, callback) {
 			callback(null, href);
 
 			if (user.type === userpost.USER_REGISTERED) {
-				db.createVote(user.id, 1, id, 1);
+				db.createVote(user.id, 1, id, 1, function(err) {
+					console.log(err);
+				});
 			}
 			addVideoLink(id, url, function(err) {
 				
 				if (err) {
 					console.log(err);
 				}
-				
-				/*var fb = require('../modules/facebook');
-				fb.accessToken('105797889471287', 'cc03e4f1e198f45214616aa73e62a39a',
-						function(err, accessToken) {
-					if (!err) {
-						var post = {
-							name: title,
-							link: layout.urls.base+href,
-							caption: 'enviado por '+user.name,
-							message: ''
-						};
-						
-						if (isVideo) {
-							post.picture = layout.urls.static+'/img/videos/thumb_'+id+'.jpg';
-						}
-
-						fb.publish('acechador.es', post, function(err, id) {
-							if (err) {
-								console.log(err);
-							}
-						});
-					}
-				});*/
 			});
 
 			
@@ -191,7 +170,6 @@ var getVideoImage = function(videoId, id, callback) {
 		console.log('request for video thumb started');
 		
 		request.on('response', function (response) {
-			console.log('request: response');
 			try {
 				var file = fs.createWriteStream(path);
 			} catch (e) {
@@ -199,7 +177,6 @@ var getVideoImage = function(videoId, id, callback) {
 			}
 			
 			response.on('data', function (chunk) {
-				console.log('writing data...');
 				file.write(chunk);
 				
 			}).on('end', function(){

@@ -14,15 +14,17 @@ Dialog = {
 		var el = Skel.fetch("dialog", json);
 		var btn = el.find('a.button');
 		if (btn) {
-			btn.attr('href', 'javascript:void(0)');
-			if (callback) {
-				btn.click(callback);
-			} else {
-				btn.click(function(e) {
-					el.fadeOut(0.5, function() {
-						el.replaceWith(replace);
+			if (!json.dialog.action) {
+				btn.attr('href', 'javascript:void(0)');
+				if (callback) {
+					btn.click(callback);
+				} else {
+					btn.click(function(e) {
+						el.fadeOut(0.5, function() {
+							el.replaceWith(replace);
+						});
 					});
-				});
+				}
 			}
 		}
 		replace.before(el);
