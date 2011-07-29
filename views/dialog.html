@@ -16,7 +16,7 @@
 		${dialog.confirm.no.label}
 	</a>
 	{{else dialog.buttonLabel}}
-	<a href="{{if dialog.acion}}${dialog.action}{{else}}/{{/if}}" class="button">
+	<a href="{{if dialog.action}}${dialog.action}{{else}}/?noaction{{/if}}" class="button">
 		${dialog.buttonLabel}
 	</a>
 	{{/if}}

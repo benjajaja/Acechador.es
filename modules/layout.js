@@ -74,6 +74,7 @@ var dialog = function(data, req, isError) {
 	}
 	
 	defaults.buttonLabel = 'Volver';
+
 	return merge(defaults, data);
 };
 
@@ -88,6 +89,9 @@ module.exports = function(options, session) {
 		base: 'http://' + options.domains.www,
 		static: 'http://' + options.domains.static
 	};
+	if (!options.production) {
+		o.urls.base += ':8888';
+	}
 	
 	var globals = function(req, override) {
 		var globals = {
@@ -97,15 +101,6 @@ module.exports = function(options, session) {
 			tip: tips[Math.floor(Math.random() * (tips.length - 1))]
 			
 		};
-		if (!options.production) {
-			globals.urls.base += ':8888';
-		}
-		var referer = req.header('Referer') || req.header('Referrer') || '';
-		if (referer.substring(0, globals.urls.base.length) == globals.urls.base) {
-			globals.action = referer.substring(globals.urls.base.length);
-		} else {
-			globals.action = '/?misterio';
-		}
 		
 		
 		if (req.session && req.session.user) {
@@ -114,13 +109,22 @@ module.exports = function(options, session) {
 				isAdmin: req.session.user.level === require('./session')().USER_LEVEL_ADMIN
 			};
 		}
-
+		
 		return merge(globals, override);
 	};
 	
 	var globalsDialog = function(req, override, isError) {
 		override.pageTemplate = 'dialog';
 		override.dialog = dialog(override, req, isError);
+
+		var referer = req.header('Referer') || req.header('Referrer') || '';
+		if (referer.substring(0, o.urls.base.length) == o.urls.base) {
+			override.dialog.action = referer.substring(o.urls.base.length);
+			console.log('action: '+referer.substring(o.urls.base.length));
+		} else {
+			override.dialog.action = '/?noreferrer';
+		}
+
 		return globals(req, override);
 	};
 	
