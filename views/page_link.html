@@ -20,9 +20,9 @@
 		{{/if}}
 		<a href="${link.url}"
 		  {{if link.video_site == 2}}
-			rel="youtube ${link.video_ref}"
+			data-video="youtube ${link.video_ref}"
 		  {{else link.video}}
-			rel="video"
+			data-video="video"
 		  {{/if}}
 		  class="link">
 			${link.name}<!--|linktitle:$link.flags-->
@@ -51,8 +51,9 @@
 			| <a class="admin" href="/admin/delete/link/${link.id}">Eliminar</a>
 			{{/if}}{{/if}}
 			
-			<span class="plusone" id="plusone-{$link.id}"></span>
+			<span class="plusone" id="plusone-${link.id}"></span>
 		</span>
+		<iframe src="http://www.facebook.com/plugins/like.php?app_id=129025953853680&amp;href&amp;send=false&amp;layout=button_count&amp;width=200&amp;show_faces=true&amp;action=like&amp;colorscheme=light&amp;font&amp;height=21" scrolling="no" frameborder="0" style="border:none; overflow:hidden; width:200px; height:21px;" allowTransparency="true"></iframe>
 		
 		<span class="floatbreak"></span>
 	</h3>

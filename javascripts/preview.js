@@ -2,8 +2,8 @@ Preview = {
   videoWidth: 548,
   videoHeight: 400,
   load: function(autoplay) {
-    $('a.link[rel]').each(function(index) {
-      var relValue = $(this).attr('rel');
+    $('a.link[data-video]').each(function(index) {
+      var relValue = $(this).attr('data-video');
       var button;
       if (relValue == 'video') {
         button = Preview.addButton($(this), 'video', $(this).attr('href'));
