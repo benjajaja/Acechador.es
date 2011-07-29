@@ -33,11 +33,9 @@ var vote = function(el, isUp) {
 					Dialog.show(jQuery.parseJSON(xhr.responseText).dialog, el.parent());
 				} catch (e) {
 					alert('Error interno');
-					console.log(xhr, status, err, e);
 				}
 			} else {
 				alert('Error interno');
-				console.log(xhr, status, err);
 			}
 			up.removeClass('voted');
 			down.removeClass('voted');

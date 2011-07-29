@@ -15,14 +15,10 @@
 	<a href="${dialog.action}" class="button">
 		${dialog.confirm.no.label}
 	</a>
-	{{else dialog.action}}
-	<a href="${dialog.action}" class="button">
+	{{else dialog.buttonLabel}}
+	<a href="{{if dialog.acion}}${dialog.action}{{else}}/{{/if}}" class="button">
 		${dialog.buttonLabel}
 	</a>
-	{{else dialog.buttonLabel}}
-	<button type="button">
-		${dialog.buttonLabel}
-	</button>
 	{{/if}}
 	
 </div>

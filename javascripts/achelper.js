@@ -1,4 +1,4 @@
-AcHelper = {
+var AcHelper = {
 	offset: function(el) {
 		try {
 			var offset = $(el).offset();
@@ -9,5 +9,11 @@ AcHelper = {
 			console.log(e);
 			return el.offset();
 		}		
+	},
+	
+	log: function() {
+		if (typeof console != 'undefined') {
+			console.log.call(console, arguments);
+		}
 	}
 };
