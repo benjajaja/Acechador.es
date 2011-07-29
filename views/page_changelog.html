@@ -1,0 +1,20 @@
+<h2 class="pageheader">
+	Registro de cambios
+</h2>
+
+<table class="git">
+	<thead>
+		<tr>
+			<th>Fecha</th>
+			<th>Autor</th>
+			<th>Mensaje</th>
+		</tr>
+	</thead>
+	<tbody>{{each(i, commit) commits}}
+		<tr>
+			<td>${commit.date}</td>
+			<td>${commit.author}</td>
+			<td>${commit.message}</td>
+		</tr>
+{{/each}}</tbody>
+</table>

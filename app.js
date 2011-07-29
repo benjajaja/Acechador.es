@@ -120,6 +120,8 @@ var db = require('./modules/db')({
 		
 		require('./rss')(app, db);
 		
+		require('./changelog')(app, layout);
+		
 		require('./admin')(app, layout, db);
 
 		// last rule - 404s!

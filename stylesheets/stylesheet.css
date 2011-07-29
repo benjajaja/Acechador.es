@@ -969,3 +969,24 @@ ul.dotted {
 	font-weight: normal;
 	font-style: normal;
 }
+
+.git {
+	border-collapse:collapse;
+	text-align: left;
+	width: 100%;
+}
+	.git thead {
+		background-color: #369;
+		color: #fff;
+		text-shadow: 0 0 2px rgba(255,255,255,0.5);
+	}
+	.git td, .git th {
+		padding: 4px;
+	}
+	.git td {
+		border-top: 1px solid #fff;
+	}
+	.git tbody {
+		background-color: #9ec2ff;
+	}
+		

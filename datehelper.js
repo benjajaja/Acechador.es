@@ -9,6 +9,14 @@ exports.getExpiryDate = function() {
 	return exports.getRFC822Date(date);
 };
 
+var padWithZero = function(val){
+	if (parseInt(val) < 10)
+	{
+	  return "0" + val;
+	}
+	return val;
+};
+
 exports.getRFC822Date = function(date) {
 	var padWithZero = function(val){
 		if (parseInt(val) < 10)
@@ -48,3 +56,6 @@ exports.getRFC822Date = function(date) {
     return dtm;
 };
 
+exports.humanShort = function(date) {
+	return padWithZero(date.getDate())+'/'+padWithZero(date.getMonth()+1)+'/'+date.getFullYear();
+};
