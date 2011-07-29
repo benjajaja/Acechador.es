@@ -3,7 +3,7 @@ module.exports = function(app, layout, db) {
 		if (req.query.q) {
 			require('./modules/linklistprovider')(db).getLinks({
 					filter: {
-						fields: ['name'],
+						fields: ['ac_links.name'],
 						value: req.query.q || ''
 					}
 				}, function(rows, pages) {

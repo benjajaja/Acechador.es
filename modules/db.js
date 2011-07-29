@@ -36,13 +36,15 @@ module.exports = function db(options, callback) {
 					.execute(callback);
 		},
 
-		getLinks: function(filter, limit, user, callback) {
+		getLinks: function(options, callback) {
+			options = options || {};
+			options.limit = options.limit || [0,25];
 			var fields = ['ac_links.*', {'username': 'ac_users.name'}, {'video_site': 'ac_videos.site'}, 
 					{'video_ref': 'ac_videos.ref'}, {'category_name': 'ac_categories.name'}, {'category_ref': 'ac_categories.ref'},
 					{'thumbnail_width': 'ac_videos.thumbnail_width'}, {'thumbnail_height': 'ac_videos.thumbnail_height'},
 					{'votes': 'ac_votes_totals.total'}
 				];
-			if (user) {
+			if (options.user) {
 				fields.push({'vote': 'ac_votes.vote'});
 			}
 			var query = db.query().select(fields)
@@ -51,22 +53,26 @@ module.exports = function db(options, callback) {
 					.join({'type': 'LEFT', 'table': 'ac_videos', 'conditions': 'ac_videos.type = ? AND ac_videos.id = ac_links.id'}, [1])
 					.join({'type': 'LEFT', 'table': 'ac_categories', 'conditions': 'ac_categories.id = ac_links.category'})
 					.join({'type': 'LEFT', 'table': 'ac_votes_totals', 'conditions': 'ac_votes_totals.type = ? AND ac_votes_totals.id = ac_links.id'}, [1]);
-			if (user) {
-				query.join({'type': 'LEFT', 'table': 'ac_votes', 'conditions': 'ac_votes.type = ? AND ac_votes.id = ac_links.id AND ac_votes.user = ?'}, [1, user]);
+			if (options.user) {
+				query.join({'type': 'LEFT', 'table': 'ac_votes', 'conditions': 'ac_votes.type = ? AND ac_votes.id = ac_links.id AND ac_votes.user = ?'}, [1, options.user]);
 			}
-			applyFilter(query, filter);
+			if (options.filter) {
+				applyFilter(query, options.filter);
+			} else if (options.where) {
+				applyWhere(query, options.where);
+			}
 			query.order({'timestamp': false, 'id': false});
-			query.limit(limit[0], limit[1]);
+			query.limit(options.limit[0], options.limit[1]);
 			query.execute(callback);
 		},
 		getLinkCommentCount: function(id, callback) {
 			db.query().select([{'count': 'COUNT(id)'}]).from('ac_comments').where('link = ?', [id])
 						.execute(callback);
 		},
-		getLinkCount: function(filter, callback) {
+		getLinkCount: function(options, callback) {
 			var query = db.query().select([{'count': 'COUNT(id)'}]).from('ac_links');
-			if (filter) {
-				applyFilter(query, filter);
+			if (options.filter) {
+				applyFilter(query, options.filter);
 			}
 			query.execute(callback);
 		},
@@ -310,6 +316,20 @@ module.exports = function db(options, callback) {
 					
 				}
 			});
+		},
+		
+		getUser: function(name, cb) {
+			db.query().select(['id', 'name', 'email', 'level', 'timestamp_registered']).from('ac_users').where('name = ?', [name])
+			.execute(function(err, rows) {
+				if (err) {
+					cb(err);
+					console.log(db.query().select(['id', 'name', 'email', 'level', 'timestamp_registered']).from('ac_users').where('name = ?', [name]).sql(), name);
+				} else if (!rows || !rows.length || rows.length == 0) {
+					cb('User not found');
+				} else {
+					cb(null, rows[0]);
+				}
+			});
 		}
 	};
 	return o;
@@ -325,4 +345,8 @@ var applyFilter = function(query, filter) {
 			query.where(filter.value);
 		}
 	}
+};
+
+var applyWhere = function(query, where) {
+	query.where(where.clause, where.parameters);
 };

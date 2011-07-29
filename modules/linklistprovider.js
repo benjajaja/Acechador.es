@@ -5,7 +5,11 @@ module.exports = function(db) {
 			options.page = options.page || 0;
 			options.limit = options.limit || 25;
 
-			db.getLinks(options.filter, [options.limit * options.page, options.limit], options.user ? options.user : null,
+			db.getLinks({filter: options.filter,
+						limit: [options.limit * options.page, options.limit],
+						user: options.user ? options.user : null,
+						where: options.where ? options.where : null
+					},
 					function(err, links) {
 				if (err) {
 					console.log(err);
@@ -24,7 +28,7 @@ module.exports = function(db) {
 						if (index < links.length) {
 							getLinkData();
 						} else {
-							db.getLinkCount(options.filter, function(err, count) {
+							db.getLinkCount(options, function(err, count) {
 								if (err) throw err;
 								var count = Math.ceil(count[0].count / options.limit);
 								var pages = [];

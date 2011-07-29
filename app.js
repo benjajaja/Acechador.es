@@ -1,8 +1,6 @@
 /*
 
 TODO:
-* se another user's page (his links)
-* allow those link protocols: http, https, ftp
 PLANNED:
 * let admins delete comments
 
@@ -11,7 +9,7 @@ PLANNED:
 var user = 0;
 var production = false;
 var port = 8888;
-var cacheTag = '2011072903';
+var cacheTag = '2011072906';
 
 for(var i = 0; i < process.argv.length; i++) {
 	if (process.argv[i] == "-u") {
@@ -111,6 +109,8 @@ var db = require('./modules/db')({
 		require('./login')(app, layout);
 
 		require('./submit')(app, layout, db);
+
+		require('./user')(app, layout, db);
 
 		require('./xhr/submit')(app, layout.session, db);
 		
