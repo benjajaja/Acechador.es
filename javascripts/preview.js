@@ -63,19 +63,6 @@ Preview = {
       joVideo.attr('src', 'http://www.youtube.com/embed/'+videoId);
       button.after(joVideo);
       Preview.setButtonPlaying(button, true);
-      //<iframe class="youtube-player" type="text/html" width="640" height="385" src="http://www.youtube.com/embed/VIDEO_ID" frameborder="0"></iframe>
-      
-      /*swfobject.embedSWF(
-  			"http://www.youtube.com/v/"+videoId+"?enablejsapi=1&playerapiid="+videoBoxId,
-  			videoBoxId,
-  			finalWidth, finalHeight,
-  			"9.0.0",
-  			null, //"expressInstall.swf",
-  			null, //flashvars,
-  			{ allowScriptAccess: "always" },
-  			{ id: videoBoxId },
-  			Preview.youtubeLoaded
-  		);*/
   	} else if (button.attr('videoType') == 'video') {
   	  var joVideoBox = $(document.createElement('span'));
   	    
