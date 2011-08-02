@@ -29,7 +29,7 @@ Submit = {
 			empty = true;
 		}
 		if (LoginOffer.isOffering()) {
-			url = 'https://acechador.es:8443'+url;
+			url = 'https://acechador.es/'+url;
 			if (LoginOffer.isRegistration()
 					&& Submit.form.find('input[name=password]').val()
 						!= Submit.form.find('input[name=password2]').val()) {
@@ -47,7 +47,10 @@ Submit = {
 					data: Submit.form.serializeArray(),
 					dataType: 'json',
 					success: Submit.success,
-					error: Submit.error
+					error: Submit.error,
+					beforeSend: function(xhr){
+						xhr.withCredentials = true;
+					}
 			});
 			
 		}

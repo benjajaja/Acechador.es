@@ -27,7 +27,7 @@ var user = 0;
 var production = false;
 var port = 8888;
 var securePort = 8443;
-var cacheTag = '2011080301';
+var cacheTag = '2011080302';
 var httpsOptions = (function() {
 	var fs = require('fs');
 	return {
