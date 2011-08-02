@@ -28,6 +28,14 @@ var production = false;
 var port = 8888;
 var securePort = 8443;
 var cacheTag = '2011080301';
+var httpsOptions = (function() {
+	var fs = require('fs');
+	return {
+	  ca:   fs.readFileSync('keys/sub.class1.server.ca.pem'),
+	  key:  fs.readFileSync('keys/ssl.key'),
+	  cert: fs.readFileSync('keys/ssl.crt')
+	};
+})();
 
 for(var i = 0; i < process.argv.length; i++) {
 	if (process.argv[i] == "-u") {
@@ -35,7 +43,7 @@ for(var i = 0; i < process.argv.length; i++) {
 	} else if (process.argv[i] == "-p") {
 		production = true;
 		port = 8000;
-		securePort = 443;
+		securePort = 8043;
 	}
 }
 
@@ -49,8 +57,8 @@ if (user != 0) {
 				'minecraft.acechadores.com': '127.0.0.1:8080',
 				'acechadores.com': '127.0.0.1:8000',
 				'acechador.es': '127.0.0.1:8000',
-				'acechador.es:443': '127.0.0.1:8443',
-			}
+			},
+			https: httpsOptions
 		};
 		proxy.createServer(routerOptions).listen(80);
 		console.log('proxying on port 80 for the following hosts:');
@@ -170,14 +178,18 @@ var db = require('./modules/db')({
 		}).run);
 		
 		(function() {
-			var fs = require('fs');
-			var options = {
-			  ca:   fs.readFileSync('keys/sub.class1.server.ca.pem'),
-			  key:  fs.readFileSync('keys/ssl.key'),
-			  cert: fs.readFileSync('keys/ssl.crt')
-			};
-			
-			var app = express.createServer(options);
+			if (user == 0) {
+				var app = express.createServer(httpsOptions);
+			} else {
+				var proxy = new (require('http-proxy')).HttpProxy();
+				var app = express.createServer(httpsOptions, function (req, res) {
+					proxy.proxyRequest(req, res, {
+						host: 'localhost', 
+						port: user == 0 ? 8888 : 8000
+					});
+				});
+			}
+						
 			app.configure(appConfigure(app));
 			
 			require('./cachebundler')(app, cacheTag);
