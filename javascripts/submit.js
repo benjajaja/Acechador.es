@@ -29,7 +29,7 @@ Submit = {
 			empty = true;
 		}
 		if (LoginOffer.isOffering()) {
-			url = 'https://acechador.es/'+url;
+			url = 'https://acechador.es'+url;
 			if (LoginOffer.isRegistration()
 					&& Submit.form.find('input[name=password]').val()
 						!= Submit.form.find('input[name=password2]').val()) {
