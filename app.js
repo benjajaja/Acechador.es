@@ -47,28 +47,7 @@ for(var i = 0; i < process.argv.length; i++) {
 	}
 }
 
-if (user != 0) {
-	(function() {
-		var http = require('http'),
-			proxy = require('http-proxy');
 
-		var routerOptions = {
-			router: {
-				'minecraft.acechadores.com': '127.0.0.1:8080',
-				'acechadores.com': '127.0.0.1:8000',
-				'acechador.es': '127.0.0.1:8000',
-			},
-			https: httpsOptions
-		};
-		proxy.createServer(routerOptions).listen(80);
-		console.log('proxying on port 80 for the following hosts:');
-		for(var key in routerOptions.router) {
-			console.log(key+': '+routerOptions.router[key]);
-		};
-		console.log('dropping privileges down to user "'+user+'"');
-		process.setuid(user);
-	})();
-}
 
 var express = require('express')
 var app = express.createServer();
@@ -178,17 +157,7 @@ var db = require('./modules/db')({
 		}).run);
 		
 		(function() {
-			if (user == 0) {
-				var app = express.createServer(httpsOptions);
-			} else {
-				var proxy = new (require('http-proxy')).HttpProxy();
-				var app = express.createServer(httpsOptions, function (req, res) {
-					proxy.proxyRequest(req, res, {
-						host: 'localhost', 
-						port: user == 0 ? 8888 : 8000
-					});
-				});
-			}
+			var app = express.createServer(httpsOptions);
 						
 			app.configure(appConfigure(app));
 			
@@ -212,3 +181,24 @@ var db = require('./modules/db')({
 
 
 
+if (user != 0) {
+	(function() {
+		var http = require('http'),
+			proxy = require('http-proxy');
+
+		var routerOptions = {
+			router: {
+				'minecraft.acechadores.com': '127.0.0.1:8080',
+				'acechadores.com': '127.0.0.1:8000',
+				'acechador.es': '127.0.0.1:8000',
+			}
+		};
+		proxy.createServer(routerOptions).listen(80);
+		console.log('proxying on port 80 for the following hosts:');
+		for(var key in routerOptions.router) {
+			console.log(key+': '+routerOptions.router[key]);
+		};
+		console.log('dropping privileges down to user "'+user+'"');
+		process.setuid(user);
+	})();
+}
