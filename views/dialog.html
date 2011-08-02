@@ -8,7 +8,14 @@
 	<p>${dialog.message}</p>
 	
 	{{if dialog.confirm}}
-	<a href="${dialog.confirm.yes.action}" class="button">
+	<!--<form method="get" action="${dialog.confirm.yes.action}">
+		<input type="hidden" name="confirm"/>
+		<button type="submit" autofocus>${dialog.confirm.yes.label}</button>
+	</form>
+	<form method="get" action="${dialog.action}">
+		<button type="submit">${dialog.confirm.no.label}</button>
+	</form>-->
+	<a href="${dialog.confirm.yes.action}" class="button" autofocus>
 		${dialog.confirm.yes.label}
 	</a>
 	&nbsp;
@@ -16,7 +23,10 @@
 		${dialog.confirm.no.label}
 	</a>
 	{{else dialog.buttonLabel}}
-	<a href="{{if dialog.action}}${dialog.action}{{else}}/?noaction{{/if}}" class="button">
+	<!--<form method="get" action="{{if dialog.action}}${dialog.action}{{else}}/?noaction{{/if}}">
+		<button type="submit" autofocus>${dialog.buttonLabel}</button>
+	</form>-->
+	<a href="{{if dialog.action}}${dialog.action}{{else}}/?noaction{{/if}}" class="button" autofocus>
 		${dialog.buttonLabel}
 	</a>
 	{{/if}}

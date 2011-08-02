@@ -26,7 +26,8 @@
 var user = 0;
 var production = false;
 var port = 8888;
-var cacheTag = '2011080101';
+var securePort = 8443;
+var cacheTag = '2011080301';
 
 for(var i = 0; i < process.argv.length; i++) {
 	if (process.argv[i] == "-u") {
@@ -34,6 +35,7 @@ for(var i = 0; i < process.argv.length; i++) {
 	} else if (process.argv[i] == "-p") {
 		production = true;
 		port = 8000;
+		securePort = 443;
 	}
 }
 
@@ -72,11 +74,10 @@ var appConfigure = function(app){
 		app.register('.html', require("jqtpl").express);
 		app.set('view options', {layout: false});
 		app.use(express.bodyParser());
-		var RedisStore = require('connect-redis')(express);
 		app.use(express.cookieParser());
 		app.use(express.session({
 			secret: "la bandica gestiona fuerte",
-			store: new RedisStore,
+			store: new (require('connect-redis')(express))
 		}));
 		express.session.ignore.push('/robots.txt');
 		express.session.ignore.push('/rss.xml');
@@ -118,6 +119,19 @@ var db = require('./modules/db')({
 
 		// Routes
 		
+		app.all('*', function(req, res, next) {
+			if (req.query.token) {
+				layout.session.loginByToken(req.query.token, req, function(err) {
+					if (err) {
+						console.log(err);
+					}
+					next();
+				});
+			} else {
+				next();
+			}
+		});
+		
 		require('./pages/search')(app, layout, db);
 		
 		require('./pages/frontpage')(app, layout, db);
@@ -132,7 +146,7 @@ var db = require('./modules/db')({
 
 		require('./pages/user')(app, layout, db);
 
-		require('./xhr/submit')(app, layout.session, db);
+		require('./xhr/submit')(app, layout.session, db, layout.urls);
 		
 		require('./xhr/comment')(app, layout.session, db);
 
@@ -170,11 +184,13 @@ var db = require('./modules/db')({
 			
 			require('./httpspages/login')(app, layout);
 			
+			require('./xhr/submit')(app, layout.session, db, layout.urls);
+			
 			require('./httpspages/admin')(app, layout, db);
 			
 			require('./staticpages')(app, layout);
 			
-			app.listen(8443);
+			app.listen(securePort);
 			console.log("Express https server listening on port %d", app.address().port);
 		})();
 		

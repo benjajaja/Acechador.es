@@ -19,8 +19,8 @@ LoginOffer = {
 				inp.disabled = false;
 			});
 			LoginOffer.el.fadeIn('slow', function() {
-				LoginOffer.input.unbind('keyup', Submit.submitterChange);
-				Submit.offering = true;
+				//LoginOffer.input.unbind('keyup', Submit.submitterChange);
+				LoginOffer.offering = true;
 			});
 		}
 	},

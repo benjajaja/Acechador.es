@@ -10,6 +10,7 @@ Submit = {
 		}
 	},
 	submit: function(e) {
+		var url = '/xhr/submit';
 		e.preventDefault();
 		// validate fields
 		var empty = false;
@@ -28,6 +29,7 @@ Submit = {
 			empty = true;
 		}
 		if (LoginOffer.isOffering()) {
+			url = 'https://acechador.es:8443'+url;
 			if (LoginOffer.isRegistration()
 					&& Submit.form.find('input[name=password]').val()
 						!= Submit.form.find('input[name=password2]').val()) {
@@ -38,8 +40,9 @@ Submit = {
 		// submit per ajax and cancel form submit
 		if (!empty) {
 			LoadingHint.show(Submit.form);
+			console.log('url: '+url);
 			jQuery.ajax({
-					url: 'xhr/submit',
+					url: url,
 					type: 'POST',
 					data: Submit.form.serializeArray(),
 					dataType: 'json',
@@ -74,6 +77,9 @@ Submit = {
 				alert('Error interno');
 				console.log(request, status, e, e2, parent);
 			}
+		} else {
+			console.log(request, status, e);
+			Dialog.show({title: 'Error interno', message: 'Ha ocurrido un error interno. Es posible que tu navegador no tenga soporte para "XMLHttpRequest a dominios cruzados" para enviar sobre una conexión segura (https). Puedes probar actualizar tu navegador, o conectar con tu cuenta antes de enviar el enlace.'}, Submit.form);
 		}
 		
 	},

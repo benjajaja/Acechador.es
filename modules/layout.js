@@ -1,4 +1,5 @@
 module.exports = function(options, session) {
+
 	var o = {
 		session: session
 	};

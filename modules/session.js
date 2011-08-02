@@ -11,6 +11,7 @@ module.exports = function(gdb) {
 		getUserName: getUserName,
 		register: register,
 		isLogged: isLogged,
+		loginByToken: loginByToken,
 		USER_LEVEL_USER: 1,
 		USER_LEVEL_ADMIN: 2,
 		USER_ANONYMOUS: 1,
@@ -19,10 +20,14 @@ module.exports = function(gdb) {
 };
 
 var getHash = function(name, password) {
+	return sha1(name+password+'cowswithgunskajdhasi8462398aksjdhaosie0928347iuasdgfashgdkjashdFUCKYOUaslkdjalsid');
+};
+
+var sha1 = function(string) {
 	require('joose');
 	require('joosex-namespace-depended');
 	require('hash');
-	return Hash.sha1(name+password+'cowswithgunskajdhasi8462398aksjdhaosie0928347iuasdgfashgdkjashdFUCKYOUaslkdjalsid');
+	return Hash.sha1(string);
 };
 
 var login = function(name, password, keep, isHashed, req, callback) {
@@ -45,7 +50,36 @@ var login = function(name, password, keep, isHashed, req, callback) {
 			callback("incorrect username or password combination");
 			return;
 		} else {
-			regenerateSession(req, rows[0], lifetime, callback);
+			var token = sha1(name+password+(new Date().toString()));
+			db.setUserToken(rows[0].id, token, function(err) {
+				if (err) {
+					console.log('could not set user token', err);
+				} else {
+					regenerateSession(req, rows[0], lifetime, function() {
+						req.session.user.token = token;
+						callback();
+					});
+				}
+				
+			});
+		}
+	});
+};
+
+var loginByToken = function(token, req, callback) {
+	db.getUserByToken(token, function(err, user) {
+		delete req.session.user;
+		if (err) {
+			callback("query error: "+err);
+		} else if (!user) {
+			callback("incorrect token");
+		} else {
+			db.setUserToken(user.id, '', function(err) {
+				if (err) {
+					console.log('could not set user token', err);
+				}
+				regenerateSession(req, user, null, callback);
+			});
 		}
 	});
 };
@@ -56,6 +90,7 @@ var regenerateSession = function(req, user, lifetime, callback) {
 			req.session.cookie.expires = new Date(Date.now() + lifetime);
 			req.session.cookie.maxAge = lifetime;
 		}
+		req.session.key = 'acechador';
 		req.session.user = user;
 		req.session.save();
 		callback();

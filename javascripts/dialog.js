@@ -3,18 +3,15 @@
 Dialog = {
 	el: null,
 	replace: null,
-	show: function(json, replace, callback) {
-		if (typeof json.dialog == "undefined" && typeof json.title != "undefined") {
-			AcHelper.log('WARNING: deprecated call to Dialog.show; must pass object with "dialog" property!');
-			json = {dialog: json};
+	show: function(dialog, replace, callback) {
+		
+		if (typeof dialog.buttonLabel == "undefined") {
+			dialog.buttonLabel = "Vale";
 		}
-		if (typeof json.dialog.buttonLabel == "undefined") {
-			json.dialog.buttonLabel = "Vale";
-		}
-		var el = Skel.fetch("dialog", json);
+		var el = Skel.fetch("dialog", {dialog: dialog});
 		var btn = el.find('a.button');
 		if (btn) {
-			if (!json.dialog.action) {
+			if (!dialog.action) {
 				btn.attr('href', 'javascript:void(0)');
 				if (callback) {
 					btn.click(callback);

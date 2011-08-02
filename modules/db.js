@@ -38,7 +38,6 @@ module.exports = function db(options, callback) {
 				.execute(function(err, rows) {
 					if (err) {
 						callback(err);
-						console.log(db.query().select(['id', 'name', 'email', 'level', 'timestamp_registered']).from('ac_users').where('name = ?', [name]).sql(), name);
 					} else if (!rows || !rows.length || rows.length == 0) {
 						callback('User not found');
 					} else {
@@ -46,6 +45,21 @@ module.exports = function db(options, callback) {
 					}
 				});
 			}
+		},
+		getUserByToken: function(token, callback) {
+			db.query().select(['id', 'name', 'level', 'token']).from('ac_users').where('token = ?', [token])
+			.execute(function(err, rows) {
+				if (err) {
+					callback(err+db.query().select(['id', 'name', 'level', 'token']).from('ac_users').where('token = ?', [token]).sql());
+				} else if (!rows || !rows.length || rows.length == 0) {
+					callback('User not found');
+				} else {
+					callback(null, rows[0]);
+				}
+			});
+		},
+		setUserToken: function(id, token, callback) {
+			db.query().update('ac_users').set({token: token}).where('id = ?', [id]).execute(callback);
 		},
 		getUsers: function(name, callback) {
 			db.query().select(['id']).from('ac_users').where('name = ?', [name]).limit(1).execute(callback);

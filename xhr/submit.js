@@ -18,75 +18,89 @@ var escapeUrl = function(string) {
 
 var db = null, session = null;
 var userpost = require('../modules/userpost');
+var urls = null;
 
 
-
-module.exports = function(app, gsession, gdb) {
+module.exports = function(app, gsession, gdb, gurls) {
 	db = gdb;
 	session = gsession;
-	app.post('/xhr/submit/?', function(req, res) {
-		handle(req, res);
+	urls = gurls;
+	app.post('/xhr/submit/?', handle);
+	
+	app.options('/xhr/submit/?', function(req, res) {
+		res.header('Access-Control-Allow-Origin', urls.base);
+		res.header('Access-Control-Allow-Methods', 'POST, GET, OPTIONS');
+		res.header('Access-Control-Allow-Headers', 'connect.sid');
+		res.header('Access-Control-Max-Age', '1728000');
+		res.send('');
 	});
 };
 
 var handle = function(req, res) {
 	res.contentType('application/json');
-
+	res.header('Access-Control-Allow-Origin', urls.base);
+	res.header('Access-Control-Allow-Credentials', 'true');
+	
 	db.getCategory(req.body.category, function(err, category) {
 		if (err || category === null) {
-			res.send({dialog: {
+			res.send({
 				title: 'Error al guardar enlace',
 				className: 'dialogError',
 				message: 'La categoría seleccionada ya no se encuentra',
 				icon: '<span class="lefteye">&times</span><span class="righteye">&times</span><span class="mouth">&#8994;</span>',
-				action: '/submit',
-				buttonLabel: 'Volver'
-			}});
+				buttonLabel: 'Vale'
+			});
 		} else {
 				
 			userpost.getRequestUserData(session, req.body, req, function(err, user) {
 				if (err) {
 					if (err === userpost.ERROR_LOGIN) {
-						res.send({dialog: {
+						res.send({
 							title: 'Usuario o contraseña incorrectos',
 							className: 'dialogError',
 							message: 'Si quieres enviar como anónimo, deja el campo de contraseña en blanco.',
 							icon: '<span class="lefteye">&times</span><span class="righteye">&times</span><span class="mouth">&#8994;</span>'
-						}}, 500);
+						}, 500);
 					} else if (err === userpost.ERROR_REGISTRATION) {
-						res.send({dialog: {
+						res.send({
 							title: 'Error',
 							className: 'dialogError',
 							message: 'Ha ocurrido un error al registrar tu cuenta nueva: '+(user ? user : '(no hay detalles del error)'),
 							icon: '<span class="lefteye">&times</span><span class="righteye">&times</span><span class="mouth">&#8994;</span>'
-						}}, 500);
+						}, 500);
 					} else {
-						res.send({dialog: {
+						res.send({
 							title: 'Error',
 							className: 'dialogError',
 							message: 'Ha ocurrido un error relacionado con la cuenta de usuario, consulte el manual página 823 párrafo 3.',
 							icon: '<span class="lefteye">&times</span><span class="righteye">&times</span><span class="mouth">&#8994;</span>'
-						}}, 500);
+						}, 500);
 					}
 				} else {
+					console.log('submit as user: ', user);
 					submit(req.body.url, req.body.title, user, category, function(err, link) {
 						if (err) {
 							console.log(err);
-							res.send({dialog: {
+							res.send({
 								title: 'Error al guardar enlace',
 								className: 'dialogError',
 								message: 'No he podido guardar el enlace.',
 								icon: '<span class="lefteye">&times</span><span class="righteye">&times</span><span class="mouth">&#8994;</span>'
-							}}, 500);
+							}, 500);
 						
 						} else {
-							res.send({dialog: {
+							var buttonLabel = 'Continuar';
+							if (req.session.user && req.session.user.token) {
+								link += '?token='+req.session.user.token;
+								buttonLabel = 'Continuar (y conectar con mi cuenta)';
+							}
+							res.send({
 								title: 'Enlace enviado',
 								message: 'Tu enlace se ha guardado correctamente. Pulsa continuar para ir a la página de tu enlace.',
 								icon: 'i',
 								action: link,
-								buttonLabel: 'Continuar'
-							}});
+								buttonLabel: buttonLabel
+							});
 						}
 						
 					});
