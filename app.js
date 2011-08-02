@@ -175,30 +175,31 @@ var db = require('./modules/db')({
 			console.log("Express https server listening on port %d", app.address().port);
 		})();
 		
+		
+		if (user != 0) {
+			(function() {
+				var http = require('http'),
+					proxy = require('http-proxy');
+
+				var routerOptions = {
+					router: {
+						'minecraft.acechadores.com': '127.0.0.1:8080',
+						'acechadores.com': '127.0.0.1:8000',
+						'acechador.es': '127.0.0.1:8000',
+					}
+				};
+				proxy.createServer(routerOptions).listen(80);
+				console.log('proxying on port 80 for the following hosts:');
+				for(var key in routerOptions.router) {
+					console.log(key+': '+routerOptions.router[key]);
+				};
+				console.log('dropping privileges down to user "'+user+'"');
+				process.setuid(user);
+			})();
+		}
 	}
 );
 
 
 
 
-if (user != 0) {
-	(function() {
-		var http = require('http'),
-			proxy = require('http-proxy');
-
-		var routerOptions = {
-			router: {
-				'minecraft.acechadores.com': '127.0.0.1:8080',
-				'acechadores.com': '127.0.0.1:8000',
-				'acechador.es': '127.0.0.1:8000',
-			}
-		};
-		proxy.createServer(routerOptions).listen(80);
-		console.log('proxying on port 80 for the following hosts:');
-		for(var key in routerOptions.router) {
-			console.log(key+': '+routerOptions.router[key]);
-		};
-		console.log('dropping privileges down to user "'+user+'"');
-		process.setuid(user);
-	})();
-}
