@@ -17,7 +17,7 @@ var escapeUrl = function(string) {
 
 
 var db = null, session = null;
-var userpost = require('./userpost');
+var userpost = require('../modules/userpost');
 
 
 

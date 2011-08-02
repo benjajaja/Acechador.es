@@ -1,4 +1,4 @@
-var userpost = require('./userpost');
+var userpost = require('../modules/userpost');
 
 var TYPE_LINK = 1;
 

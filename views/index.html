@@ -6,6 +6,7 @@
 	<link rel="stylesheet" type="text/css" href="/stylesheet_${styleSheetCacheVersion}.css" media="screen"/>
 	<link rel="shortcut icon" href="/favicon.ico" />
 	<link href="/rss.xml" type="application/rss+xml" rel="alternate" title="RSS ATOM Feed" />
+	<!--[if lte IE 8]><style type="text/css" media="screen">html {filter:gray;}</style><![endif]-->
 </head>
 
 <div id="body">
@@ -42,7 +43,7 @@
 					<a class="button" href="/logout">Desconectar</a>
 				</div>
 				{{else}}
-				<form class="box login" action="/login" method="post">
+				<form class="box login" action="${urls.secure}/login" method="post">
 					<input type="text" placeholder="usuario" name="name" />
 					<input type="password" placeholder="contraseña" name="password" />
 					<button type="submit" title="Hacer login">
@@ -85,6 +86,7 @@
 					</label>
 				</div>
 				
+				{{if !isHttps}}
 				<div class="ads ads-leftpanel">
 					<script type="text/javascript"><!--
 					google_ad_client = "ca-pub-1527586273799797";
@@ -95,10 +97,10 @@
 					//-->
 					</script>
 					<script type="text/javascript"
-					src="http://pagead2.googlesyndication.com/pagead/show_ads.js">
+					src="//pagead2.googlesyndication.com/pagead/show_ads.js">
 					</script>
 				</div>
-
+				{{/if}}
 
 
 			</div>

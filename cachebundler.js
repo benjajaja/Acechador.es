@@ -3,7 +3,7 @@ var cacheTag = '0';
 var fs = require('fs');
 var styleSheets = ['stylesheet.css'];//, 'stylesheet_light.css', 'stylesheet_heavy.css'];
 
-var scripts = ['adsense.js', 'achelper.js', 'comment.js', 'dialog.js',
+var scripts = ['achelper.js', 'comment.js', 'dialog.js',
 	'loadinghint.js', 'loginoffer.js', 'preview.js', 'skel.js',
 	'submit.js', 'touchpad.js', 'votes.js', 'facebook.js',
 	'jquery-1.6.2.min.js', 'jquery.cookie.js',
@@ -12,7 +12,7 @@ var scripts = ['adsense.js', 'achelper.js', 'comment.js', 'dialog.js',
 ];
 var templates = ['dialog.html', 'comment.html'];
 
-var dateHelper = require('./datehelper');
+var dateHelper = require('./modules/datehelper');
 
 var handleStylesheet = function(req, res) {
 	var cachePath = 'stylesheets/.compressed/'+cacheTag+'.css.gz';

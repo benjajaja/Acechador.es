@@ -1,8 +1,25 @@
 /*
 
-TODO:
-PLANNED:
-* let admins delete comments
+	ACECHADOR.ES website to share links
+	Copyright (C) 2009-2011 Benjamin Grosse
+
+	This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU Affero General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU Affero General Public License for more details.
+
+    You should have received a copy of the GNU Affero General Public License
+    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+	
+	TODO:
+		PLANNED:
+		* let admins delete comments
 
 */
 
@@ -29,7 +46,8 @@ if (user != 0) {
 			router: {
 				'minecraft.acechadores.com': '127.0.0.1:8080',
 				'acechadores.com': '127.0.0.1:8000',
-				'acechador.es': '127.0.0.1:8000'
+				'acechador.es': '127.0.0.1:8000',
+				'acechador.es:443': '127.0.0.1:8443',
 			}
 		};
 		proxy.createServer(routerOptions).listen(80);
@@ -43,34 +61,36 @@ if (user != 0) {
 }
 
 var express = require('express')
-var app = module.exports = express.createServer();
+var app = express.createServer();
+
 
 // Configuration
-
-app.configure(function(){
-	app.set('views', __dirname + '/views');
-	app.set('view engine', 'html');
-	app.register('.html', require("jqtpl").express);
-	app.set('view options', {layout: false});
-	app.use(express.bodyParser());
-	var RedisStore = require('connect-redis')(express);
-	app.use(express.cookieParser());
-	app.use(express.session({
-		secret: "la bandica gestiona fuerte",
-		store: new RedisStore,
-	}));
-	express.session.ignore.push('/robots.txt');
-	express.session.ignore.push('/rss.xml');
-	express.session.ignore.push('/img');
-	express.session.ignore.push('/fonts');
-	
-	app.use(express.methodOverride());
-	app.use(app.router);
-	if (production) {
-		app.enable('saveCacheResources');
-	}
-});
-
+var appConfigure = function(app){
+	return function() {
+		app.set('views', __dirname + '/views');
+		app.set('view engine', 'html');
+		app.register('.html', require("jqtpl").express);
+		app.set('view options', {layout: false});
+		app.use(express.bodyParser());
+		var RedisStore = require('connect-redis')(express);
+		app.use(express.cookieParser());
+		app.use(express.session({
+			secret: "la bandica gestiona fuerte",
+			store: new RedisStore,
+		}));
+		express.session.ignore.push('/robots.txt');
+		express.session.ignore.push('/rss.xml');
+		express.session.ignore.push('/img');
+		express.session.ignore.push('/fonts');
+		
+		app.use(express.methodOverride());
+		app.use(app.router);
+		if (production) {
+			app.enable('saveCacheResources');
+		}
+	};
+};
+app.configure(appConfigure(app));
 
 
 
@@ -98,19 +118,19 @@ var db = require('./modules/db')({
 
 		// Routes
 		
-		require('./search')(app, layout, db);
+		require('./pages/search')(app, layout, db);
 		
-		require('./frontpage')(app, layout, db);
+		require('./pages/frontpage')(app, layout, db);
+		
+		require('./httpspages/login')(app, layout, true);
 		
 		require('./cachebundler')(app, cacheTag);
 
-		require('./link')(app, layout, db);
+		require('./pages/link')(app, layout, db);
 
-		require('./login')(app, layout);
+		require('./pages/submit')(app, layout, db);
 
-		require('./submit')(app, layout, db);
-
-		require('./user')(app, layout, db);
+		require('./pages/user')(app, layout, db);
 
 		require('./xhr/submit')(app, layout.session, db);
 		
@@ -120,10 +140,8 @@ var db = require('./modules/db')({
 		
 		require('./rss')(app, db);
 		
-		require('./changelog')(app, layout);
+		require('./pages/changelog')(app, layout);
 		
-		require('./admin')(app, layout, db);
-
 		// last rule - 404s!
 		require('./staticpages')(app, layout);
 
@@ -137,7 +155,31 @@ var db = require('./modules/db')({
 			pageid: 'acechador.es'
 		}).run);
 		
-	});
+		(function() {
+			var fs = require('fs');
+			var options = {
+			  ca:   fs.readFileSync('keys/sub.class1.server.ca.pem'),
+			  key:  fs.readFileSync('keys/ssl.key'),
+			  cert: fs.readFileSync('keys/ssl.crt')
+			};
+			
+			var app = express.createServer(options);
+			app.configure(appConfigure(app));
+			
+			require('./cachebundler')(app, cacheTag);
+			
+			require('./httpspages/login')(app, layout);
+			
+			require('./httpspages/admin')(app, layout, db);
+			
+			require('./staticpages')(app, layout);
+			
+			app.listen(8443);
+			console.log("Express https server listening on port %d", app.address().port);
+		})();
+		
+	}
+);
 
 
 

@@ -1,7 +1,7 @@
 var IMAGE_MAX_WIDTH_THUMB = 200;
 var IMAGE_MAX_HEIGHT_THUMB = 200;
 
-var userpost = require('./userpost');
+var userpost = require('../modules/userpost');
 
 module.exports = function(app, session, db) {
 

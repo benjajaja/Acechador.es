@@ -16,8 +16,11 @@ module.exports = function db(options, callback) {
 	});
 
 	var o = {
-		query: function() {
-			console.log("WARNING: deprecated call to db.query()");
+		query: function(ignoreWarnings) {
+			if (!ignoreWarnings) {
+				console.trace();
+				console.warn("WARNING: deprecated call to db.query()");
+			}
 			return db.query();
 		},
 
@@ -34,12 +37,12 @@ module.exports = function db(options, callback) {
 				db.query().select(['id', 'name', 'email', 'level', 'timestamp_registered']).from('ac_users').where('name = ?', [name])
 				.execute(function(err, rows) {
 					if (err) {
-						cb(err);
+						callback(err);
 						console.log(db.query().select(['id', 'name', 'email', 'level', 'timestamp_registered']).from('ac_users').where('name = ?', [name]).sql(), name);
 					} else if (!rows || !rows.length || rows.length == 0) {
-						cb('User not found');
+						callback('User not found');
 					} else {
-						cb(null, rows[0]);
+						callback(null, rows[0]);
 					}
 				});
 			}

@@ -48,7 +48,7 @@
 			{{/if}}
 			
 			{{if login}}{{if login.isAdmin}}
-			| <a class="admin" href="/admin/delete/link/${link.id}">Eliminar</a>
+			| <a class="admin" href="${urls.secure}/admin/delete/link/${link.id}">Eliminar</a>
 			{{/if}}{{/if}}
 			
 			<span class="plusone" id="plusone-${link.id}"></span>
