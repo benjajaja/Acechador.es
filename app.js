@@ -43,7 +43,7 @@ for(var i = 0; i < process.argv.length; i++) {
 	} else if (process.argv[i] == "-p") {
 		production = true;
 		port = 8000;
-		securePort = 8043;
+		securePort = 443;
 	}
 }
 
