@@ -18,7 +18,8 @@ module.exports = function(app, layout) {
 				if (extension && ['.jpg', '.png'].indexOf(extension) !== -1) {
 					res.send('not found', 404);
 				} else {
-					require('fs').readFile(__dirname + '/views/error.html', function(err, data) {
+					require('fs').readFile(__dirname + '/views/404.html', function(err, data) {
+						res.header('Content-Type', 'text/html');
 						res.send(data, 404);
 					});
 				}

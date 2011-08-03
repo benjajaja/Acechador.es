@@ -33,7 +33,7 @@ module.exports = function(db) {
                                 options = {'alphaid': options};
                         }
                         db.getLink(options.alphaid, options.user, function(err, link) {
-                                if (err) {
+                                if (err || !link) {
                                         console.log(err);
                                         callback(err, []);
                                 } else {

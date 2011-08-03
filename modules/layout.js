@@ -41,7 +41,7 @@ module.exports = function(options, session) {
 		
 		res.render('index', globals(req, data), function(err, data) {
 			if (err) {
-				res.send('<pre>Error: '+err+'\n'+err.stack);
+				res.render('error', {error: err});
 				console.log(err.toString(), err.stack);
 				return;
 			}
