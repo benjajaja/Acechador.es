@@ -30,19 +30,21 @@ var getGitLog = function(cb) {
 	};
 	
 	var result = [];
-	exec('git log --pretty="format:%cd|%cn|%ce|%s|%b"', function(error, stdout, stderr) {
+	exec('git log --pretty="format:%cd|%cn|%ce|%s|%b" --no-merges', function(error, stdout, stderr) {
 		if(error) {
 			cb(stderr);
 			
 		} else {
 			each(stdout.split('\n'), function(line, i, last) {
 				var parts = line.split('|');
-				result.push({
-					date: datehelper.humanShort(new Date(parts[0])),
-					message: parts[3],
-					author: parts[1],
-					email: parts[2]
-				});
+				if (parts.length == 4) {
+					result.push({
+						date: datehelper.humanShort(new Date(parts[0])),
+						message: parts[3],
+						author: parts[1],
+						email: parts[2]
+					});
+				}
 				if (last) {
 					cb(null, result);
 				}
