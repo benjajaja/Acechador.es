@@ -37,7 +37,7 @@ var getGitLog = function(cb) {
 		} else {
 			each(stdout.split('\n'), function(line, i, last) {
 				var parts = line.split('|');
-				if (parts.length == 4) {
+				if (parts.length >= 4) {
 					result.push({
 						date: datehelper.humanShort(new Date(parts[0])),
 						message: parts[3],
