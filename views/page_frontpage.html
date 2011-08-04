@@ -1,6 +1,6 @@
 <div class="links">
 {{if links}}
-	{{each(i, link) links}}
+	{{each(index, link) links}}
 	<h3>
 		<span class="votes" data-voted="none" data-link="${link.alphaid}">
 			<span class="arrow up{{if link.vote === 1}} voted{{/if}}" title="¿Gestión fuerte?">
@@ -51,6 +51,21 @@
 		
 		<span class="floatbreak"></span>
 	</h3>
+	{{if index == 1}}
+	<div class="ad">
+		<script type="text/javascript"><!--
+		google_ad_client = "ca-pub-1527586273799797";
+		/* enlace falso 2 */
+		google_ad_slot = "7758630994";
+		google_ad_width = 468;
+		google_ad_height = 60;
+		//-->
+		</script>
+		<script type="text/javascript"
+		src="http://pagead2.googlesyndication.com/pagead/show_ads.js">
+		</script>
+	</div>
+	{{/if}}
 	{{/each}}
 
 {{else}}
