@@ -25,7 +25,7 @@
 			data-video="video"
 		  {{/if}}
 		  class="link">
-			${link.name}<!--|linktitle:$link.flags-->
+			${link.name}
 		</a>
 		<span class="link_actions">
 			<span class="submitter">
@@ -39,7 +39,7 @@
 				{{/if}}
 			</span>
 			en
-			<span class="go">${link.category_name}</span>
+			<a href="/r/${link.category_ref}" class="go">${link.category_name}</a>
 			{{if !link.single}}
 				<a href="/r/${link.category_ref}/${link.alphaid}/${link.ref}/" class="go actions">
 					${link.comments.length} {{if link.comments.length == 1}}comentario{{else}}comentarios{{/if}} &#9658;
@@ -52,19 +52,17 @@
 		<span class="floatbreak"></span>
 	</h3>
 	{{if index == 1}}
-	<div class="ad">
-		<script type="text/javascript"><!--
+	<!--<div class="ad">
+		<script type="text/javascript">
 		google_ad_client = "ca-pub-1527586273799797";
-		/* enlace falso 2 */
 		google_ad_slot = "7758630994";
 		google_ad_width = 468;
 		google_ad_height = 60;
-		//-->
 		</script>
 		<script type="text/javascript"
 		src="http://pagead2.googlesyndication.com/pagead/show_ads.js">
 		</script>
-	</div>
+	</div>-->
 	{{/if}}
 	{{/each}}
 

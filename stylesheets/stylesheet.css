@@ -1,3 +1,23 @@
+@font-face {
+	font-family: 'Citon';
+	src: url('fonts/citonl.eot');
+	src: local('CitonLightDB Normal'), local('CitonLightDBNormal'), url('fonts/citonl.ttf') format('truetype');
+}
+@font-face {
+	font-family: 'PerspectiveSansBold';
+	src: url('fonts/persansb-webfont.eot');
+	src: local('?'), url('fonts/persansb-webfont.woff') format('woff'), url('fonts/persansb-webfont.ttf') format('truetype'), url('fonts/persansb-webfont.svg#webfont') format('svg');
+	font-weight: normal;
+	font-style: normal;
+}
+@font-face {
+	font-family: 'QlassikMediumRegular';
+	src: url('fonts/Qlassik_TB-webfont.eot');
+	src: local('?'), url('fonts/Qlassik_TB-webfont.woff') format('woff'), url('fonts/Qlassik_TB-webfont.ttf') format('truetype'), url('fonts/Qlassik_TB-webfont.svg#webfont') format('svg');
+	font-weight: normal;
+	font-style: normal;
+}
+
 /* reset */
 html, body, div, span, applet, object, iframe,
 h1, h2, h3, h4, h5, h6, p,
@@ -203,8 +223,8 @@ ul.dotted {
   	top: 10px;
   	left: 10px;
 	font: 256px Citon,Arial,Verdana,sans-serif;
-	height: 270px;
-	line-height: 260px;
+	height: 242px;
+	line-height: 205px;
 	overflow: hidden;
   	margin-top: 0;
 	color: #000;
@@ -249,7 +269,7 @@ ul.dotted {
 	position: absolute;
 	width: 200px;
 	margin: 0 10px;
-	top: 0;
+	top: 28px;
 }
 	#leftpanel .box {
 		margin-top: 10px;
@@ -318,7 +338,6 @@ ul.dotted {
 #view {
 	margin-left: 220px;
 	margin-right: 10px;
-	margin-top: 20px;
 	padding-top: 10px;
 }
 
@@ -353,7 +372,32 @@ ul.dotted {
   background-color: #fff;
   color: #000;
   font-family: monospace;
-}		
+}
+
+.categories {
+	margin: 10px 5px;
+	border-bottom: 1px dotted #999;
+	overflow: hidden;
+	padding: 0 12px;
+}
+	.categories .topborder {
+		border-top: 1px dotted #999;
+	}
+	.categories a, .categories span {
+		display: block;
+		float: left;
+		text-transform: uppercase;
+		text-decoration: none;
+		font-size: 0.7em;
+		color: #333;
+	}
+		.categories a:hover {
+			text-decoration: underline;
+		}
+	.categories span {
+		color: #666;
+		font-size: 0.5em;
+	}
 
 .dialog {
 	border: 1px solid #bbb;
@@ -902,11 +946,31 @@ ul.dotted {
 		background-color: #c00;
 		color: #fff;
 	}
+
+
+
+
+.git {
+	border-collapse:collapse;
+	text-align: left;
+	width: 100%;
+}
+	.git thead {
+		background-color: #369;
+		color: #fff;
+		text-shadow: 0 0 2px rgba(255,255,255,0.5);
+	}
+	.git td, .git th {
+		padding: 4px;
+	}
+	.git td {
+		border-top: 1px solid #fff;
+	}
+	.git tbody {
+		background-color: #9ec2ff;
+	}	
 		
-		
-/**
- * OMG it can't get more stupid. Opera mini sucks. Opera, sucks. Why would anyone use that POS
- */
+
 @media screen and (max-width: 1100px), screen and (max-device-width: 480px) {
 	#page {
 		width: auto;
@@ -943,6 +1007,14 @@ ul.dotted {
 			text-align: center;
 			margin: 30px 0 0 0;
 		}
+	.categories {
+		border-top: 1px dotted #999;
+		margin-left: 0;
+		margin-right: 0;
+	}
+	.categories .topborder {
+		display: none;
+	}
 }
 @media screen and (max-width: 480px), screen and (max-device-width: 480px) {
 	#card {
@@ -957,43 +1029,6 @@ ul.dotted {
 }
 
 
-@font-face {
-	font-family: 'Citon';
-	src: url('fonts/citonl.eot');
-	src: local('CitonLightDB Normal'), local('CitonLightDBNormal'), url('fonts/citonl.ttf') format('truetype');
-}
-@font-face {
-	font-family: 'PerspectiveSansBold';
-	src: url('fonts/persansb-webfont.eot');
-	src: local('?'), url('fonts/persansb-webfont.woff') format('woff'), url('fonts/persansb-webfont.ttf') format('truetype'), url('fonts/persansb-webfont.svg#webfont') format('svg');
-	font-weight: normal;
-	font-style: normal;
-}
-@font-face {
-	font-family: 'QlassikMediumRegular';
-	src: url('fonts/Qlassik_TB-webfont.eot');
-	src: local('?'), url('fonts/Qlassik_TB-webfont.woff') format('woff'), url('fonts/Qlassik_TB-webfont.ttf') format('truetype'), url('fonts/Qlassik_TB-webfont.svg#webfont') format('svg');
-	font-weight: normal;
-	font-style: normal;
-}
 
-.git {
-	border-collapse:collapse;
-	text-align: left;
-	width: 100%;
-}
-	.git thead {
-		background-color: #369;
-		color: #fff;
-		text-shadow: 0 0 2px rgba(255,255,255,0.5);
-	}
-	.git td, .git th {
-		padding: 4px;
-	}
-	.git td {
-		border-top: 1px solid #fff;
-	}
-	.git tbody {
-		background-color: #9ec2ff;
-	}
+
 		

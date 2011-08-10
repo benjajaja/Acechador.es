@@ -6,6 +6,7 @@
 	<link rel="stylesheet" type="text/css" href="/stylesheet_${styleSheetCacheVersion}.css" media="screen"/>
 	<link rel="shortcut icon" href="/favicon.ico" />
 	<link href="/rss.xml" type="application/rss+xml" rel="alternate" title="RSS ATOM Feed" />
+	<meta name="viewport" content="width=480" />
 	<!--[if lte IE 8]><style type="text/css" media="screen">html {filter:gray;}</style><![endif]-->
 </head>
 
@@ -20,6 +21,12 @@
 
 		<div id="card" class="card">
 			<h1 class="logo small-screen">Acechado<span>r</span>.es</h1>
+			
+			<div class="categories">
+				<div class="topborder"></div>
+				<a href="/">Todo</a>{{each(index, category) topCategories}}<span>···</span><a href="/r/${category.ref}">${category.name}</a>{{/each}}
+			</div>
+			
 			<div id="view">
 			{{if pageTemplate}}
 			{{partial pageTemplate}}

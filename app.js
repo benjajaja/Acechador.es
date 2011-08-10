@@ -27,7 +27,7 @@ var user = 0;
 var production = false;
 var port = 8888;
 var securePort = 8443;
-var cacheTag = '2011080401';
+var cacheTag = '2011081001';
 var httpsOptions = (function() {
 	var fs = require('fs');
 	return {
@@ -101,7 +101,7 @@ var db = require('./modules/db')({
 			},
 			cacheTag: cacheTag,
 			production: production
-		}, require('./modules/session')(db));
+		}, db);
 
 
 		// Routes
@@ -132,6 +132,8 @@ var db = require('./modules/db')({
 		require('./pages/submit')(app, layout, db);
 
 		require('./pages/user')(app, layout, db);
+		
+		require('./pages/category')(app, layout, db);
 
 		require('./xhr/submit')(app, layout.session, db, layout.urls);
 		

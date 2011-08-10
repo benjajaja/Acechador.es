@@ -1,7 +1,7 @@
-module.exports = function(options, session) {
+module.exports = function(options, db) {
 
 	var o = {
-		session: session
+		session: require('./session')(db)
 	};
 
 	o.urls = {
@@ -15,14 +15,23 @@ module.exports = function(options, session) {
 		o.urls.secure += ':8443';
 	}
 	
+	var categories = [{ref: '', name: 'Cargando...'}];
+	db.getCategories(function(err, rows) {
+		if (err) throw err;
+		categories = [];
+		for(var i = 0; i < rows.length; i++) {
+			categories.push({ref: rows[i].ref, name: rows[i].name});
+		}
+	});
+	
 	var globals = function(req, override) {
 		var globals = {
 			isHttps: false,
 			styleSheetCacheVersion: options.cacheTag,
 			urls: o.urls,
 			title: 'Acechador.es',
-			tip: tips[Math.floor(Math.random() * (tips.length - 1))]
-			
+			tip: tips[Math.floor(Math.random() * (tips.length - 1))],
+			topCategories: categories,
 		};
 		
 		
