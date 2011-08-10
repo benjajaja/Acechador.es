@@ -39,7 +39,7 @@
 				{{/if}}
 			</span>
 			en
-			<span class="go">${link.category_name}</span>
+			<a href="/r/${link.category_ref}" class="go">${link.category_name}</a>
 			{{if !link.single}}
 				<a href="/r/${link.category_ref}/${link.alphaid}/${link.ref}/" class="go actions">
 					${link.comments.length} {{if link.comments.length == 1}}comentario{{else}}comentarios{{/if}} &#9658;
