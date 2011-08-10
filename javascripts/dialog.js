@@ -5,9 +5,16 @@ Dialog = {
 	replace: null,
 	show: function(dialog, replace, callback) {
 		
+		
 		if (typeof dialog.buttonLabel == "undefined") {
+			if (typeof dialog.message == "undefined" && typeof dialog.title == 'undefined') {
+				return;
+			}
+			
 			dialog.buttonLabel = "Vale";
+			
 		}
+		
 		var el = Skel.fetch("dialog", {dialog: dialog});
 		var btn = el.find('a.button');
 		if (btn) {
@@ -26,6 +33,17 @@ Dialog = {
 		}
 		replace.before(el);
 		replace.detach();
+		
+		return {
+			close: function() {
+				el.fadeOut(0.5);
+			},
+			clear: function() {
+				el.fadeOut(0.5, function() {
+					el.replaceWith(replace);
+				});
+			}
+		};
 	},
 	clear: function() {
 		Dialog.el.fadeOut(0.5, function() {

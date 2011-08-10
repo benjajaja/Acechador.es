@@ -164,8 +164,8 @@ Comments = {
 		commentElement.fadeIn(2000);
 		
 		try {
-			Dialog.show(data, Comments.form, function() {
-				Dialog.close();
+			var dialog = Dialog.show(data.dialog, Comments.form, function() {
+				dialog.close();
 				
 			});
 		} catch (e) {
