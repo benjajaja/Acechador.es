@@ -47,6 +47,11 @@
 				
 			{{/if}}
 			<span class="plusone" id="plusone-${link.id}"></span>
+			{{if link.fbpost}}
+				<a href="http://www.facebook.com/${link.fbpost.page}/posts/${link.fbpost.post}" class="fblike">[fb] publicar en mi muro</a>
+			{{/if}}
+
+
 		</span>
 		
 		<span class="floatbreak"></span>

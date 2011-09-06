@@ -24,6 +24,10 @@ module.exports = function(db) {
 					links[index].antiquity = formatter.antiquity(links[index].timestamp);
 					db.getLinkCommentCount(links[index].id, function(err, comments) {
 						links[index].comments = {'length': comments[0].count};
+						if (links[index].fbpost) {
+							var split = links[index].fbpost.split('_');
+							links[index].fbpost = {page: split[0], post: split[1]};
+						}
 						index++;
 						if (index < links.length) {
 							getLinkData();
