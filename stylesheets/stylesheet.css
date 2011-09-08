@@ -859,6 +859,13 @@ ul.dotted {
 	.comments .comment .comment_text {
 		padding-left: 10px;
 	}
+		.comment_text blockquote {
+			border-left: 2px solid #069;
+			padding-left: 4px;
+		}
+		.comment_text p {
+			margin-bottom: 10px;	
+		}
 	.comment .image {
 		display: block;
 		float: left;
@@ -906,6 +913,26 @@ ul.dotted {
 .para {
 	margin-bottom: 30px;
 }
+
+#comment-format-help {
+	float: right;
+	clear: right;
+	width: 480px;
+}
+	#comment-format-help table {
+		width: 100%;
+		border: 1px solid #666;
+	}
+		#comment-format-help table th {
+			background-color: #BAD3FF;
+			border: 1px solid #666;
+		}
+		#comment-format-help table td {
+			border: 1px solid #666;
+			padding: 2px 8px;
+			font-size: 0.8em;
+			width: 50%;
+		}
 
 .loadingHint {
 	position: absolute;

@@ -69,6 +69,8 @@ module.exports = function(app, session, db) {
 	});
 	
 	var comment = function(link, user, text, imagedata, callback) {
+		var md = require("node-markdown").Markdown;
+		text = md(text, true, 'em|strong|strike|a|blockquote|p', {'a':'href'});
 		db.createComment(link, text, user.type, (user.type === userpost.USER_ANONYMOUS ? user.name : user.id),
 				function(err, result) {
 			if (err) {

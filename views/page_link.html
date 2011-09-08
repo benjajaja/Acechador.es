@@ -114,10 +114,22 @@
 		    	<label>
 		      		Comentario:
 		      		<textarea cols="48" rows="4" name="comment" placeholder="${commentPlaceholder}"></textarea>
-		      		<span class="info">
-		      			Si pegas una dirección luego se convierte automácamente en enlace
-		      		</span>
 		    	</label>
+				<a href="#" onclick="$('#comment-format-help').show(); return false;" class="info">Ayuda para el formato</a>
+				<div id="comment-format-help" style="display: none">
+					<table class="comment_text">
+						<tr><th>Lo que escribes</th><th>Lo que sale</th></tr>
+						<tr><td>*cursiva*</td><td><em>cursiva</em></td></tr>
+						<tr><td>**negrita**</td><td><strong>negrita</strong></td></tr>
+						<tr><td>~~tachado~~</td><td><strike>tachado</strike></td></tr>
+						<tr><td>[acechadores!](http://acechador.es)</td><td><a href="http://acechador.es">acechadores!</a></td></tr>
+						<tr><td>&gt; cita</td><td><blockquote>cita</blockquote></td></tr>
+						<!--<tr><td>Deja dos espacios&nbsp;&nbsp;<br/>al final de una línea&nbsp;&nbsp;<br/>para insertar un salto de línea</td>
+							<td>Deja dos espacios<br/>al final de una línea<br/>para insertar un salto de línea</td></tr>-->
+						<tr><td>Deja una línea en blanco<br/><br/>para hacer un salto de párrafo</td>
+						<td><p>Deja una línea en blanco</p><p>para hacer un salto de párrafo</p></td></tr>
+					</table>
+				</div>
 		  	</fieldset>
 		  	<fieldset>
 		  		<label>
