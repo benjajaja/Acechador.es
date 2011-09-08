@@ -51,7 +51,14 @@ for(var i = 0; i < process.argv.length; i++) {
 
 var express = require('express')
 var app = express.createServer();
+var log4js = require('log4js');
+log4js.configure('log4js.json', {});
+log4js.addAppender(log4js.fileAppender('./logs/log'), 'console');
+log4js.addAppender(log4js.fileAppender('./logs/access'), 'access');
 
+process.on('uncaughtException', function (err) {
+	log4js.getLogger('console').fatal('Uncaught exception:', err);
+});
 
 // Configuration
 var appConfigure = function(app){
@@ -75,10 +82,17 @@ var appConfigure = function(app){
 		app.use(app.router);
 		if (production) {
 			app.enable('saveCacheResources');
+		} else {
+			// in production node is wrapped by forever, which also logs output
+			// so we only enable console logging in development
+			log4js.addAppender(log4js.consoleAppender(), 'console');
 		}
+		
+		app.use(log4js.connectLogger(log4js.getLogger('logger'), { level: log4js.levels.INFO }));
 	};
 };
 app.configure(appConfigure(app));
+
 
 
 
@@ -107,10 +121,11 @@ var db = require('./modules/db')({
 		// Routes
 		
 		app.all('*', function(req, res, next) {
+			log4js.getLogger('access').info(req.connection.remoteAddress+' '+req.method+' '+req.url);
 			if (req.query.token) {
 				layout.session.loginByToken(req.query.token, req, function(err) {
 					if (err) {
-						console.log(err);
+						console.error(err);
 					}
 					next();
 				});
@@ -149,7 +164,7 @@ var db = require('./modules/db')({
 		require('./staticpages')(app, layout);
 
 		app.listen(port);
-		console.log("Express server listening on port %d", app.address().port);
+		console.log('Express server listening on port %d', app.address().port);
 		
 		var cron = require('cron');
 		new cron.CronJob('0 0 11,23 * * *', require('./modules/cronjobs/facebook')(db, layout, {
@@ -158,6 +173,7 @@ var db = require('./modules/db')({
 			pageid: 'acechador.es'
 		}).run);
 		
+		// secure server
 		(function() {
 			var app = express.createServer(httpsOptions);
 						
@@ -177,7 +193,7 @@ var db = require('./modules/db')({
 			console.log("Express https server listening on port %d", app.address().port);
 		})();
 		
-		
+		// proxy
 		if (user != 0) {
 			(function() {
 				var http = require('http'),

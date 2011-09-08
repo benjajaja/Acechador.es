@@ -18,6 +18,9 @@ var padWithZero = function(val){
 };
 
 exports.getRFC822Date = function(date) {
+	if (typeof date == 'undefined') {
+		date = new Date();
+	}
 	var padWithZero = function(val){
 		if (parseInt(val) < 10)
 		{
@@ -58,4 +61,12 @@ exports.getRFC822Date = function(date) {
 
 exports.humanShort = function(date) {
 	return padWithZero(date.getDate())+'/'+padWithZero(date.getMonth()+1)+'/'+date.getFullYear();
+};
+
+exports.mysql = function(date) {
+	if (typeof date == 'undefined') {
+		date = new Date();
+	}
+	return padWithZero(date.getFullYear())+'-'+padWithZero(date.getMonth()+1)+'-'+date.getDate()
+		+' '+padWithZero(date.getHours())+'-'+padWithZero(date.getMinutes())+'-'+date.getSeconds();
 };

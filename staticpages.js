@@ -14,6 +14,8 @@ module.exports = function(app, layout) {
 		var path = require('path');
 		path.exists(__dirname + '/public/'+filepath, function(exists) {
 			if (!exists) {
+				require('log4js').getLogger('access').warn('404 NOT FOUND '+req.connection.remoteAddress+' '+req.method+' '+req.url
+					+' '+req.headers.referer);
 				var extension = path.extname(filepath);
 				if (extension && ['.jpg', '.png'].indexOf(extension) !== -1) {
 					res.send('not found', 404);
