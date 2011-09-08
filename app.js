@@ -53,8 +53,7 @@ var express = require('express')
 var app = express.createServer();
 var log4js = require('log4js');
 log4js.configure('log4js.json', {});
-log4js.addAppender(log4js.fileAppender('./logs/log'), 'console');
-log4js.addAppender(log4js.fileAppender('./logs/access'), 'access');
+
 
 process.on('uncaughtException', function (err) {
 	log4js.getLogger('console').fatal('Uncaught exception:', err);
@@ -215,6 +214,9 @@ var db = require('./modules/db')({
 				process.setuid(user);
 			})();
 		}
+		// log files should ne owned by user now if run as root
+		log4js.addAppender(log4js.fileAppender('./logs/log'), 'console');
+		log4js.addAppender(log4js.fileAppender('./logs/access'), 'access');
 	}
 );
 
