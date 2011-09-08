@@ -68,9 +68,12 @@ var appConfigure = function(app){
 		app.set('view options', {layout: false});
 		app.use(express.bodyParser());
 		app.use(express.cookieParser());
+		
+		var FileStore = require('filestore').FileStore;
 		app.use(express.session({
 			secret: "la bandica gestiona fuerte",
-			store: new (require('connect-redis')(express))
+			store: new FileStore(__dirname + '/sessions'),
+			
 		}));
 		express.session.ignore.push('/robots.txt');
 		express.session.ignore.push('/rss.xml');
