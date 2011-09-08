@@ -1,6 +1,6 @@
 
 
-module.exports = function(app, layout, db) {
+module.exports = function(app, layout, db, fb) {
 	var dialog = require('../modules/dialog');
 	var showDialogError = function(req, res, data) {
 		data.action = layout.getReturnUrl(req, true);
@@ -13,47 +13,37 @@ module.exports = function(app, layout, db) {
 		layout.render(req, res, dialog(data).asGlobal({isHttps: true}));
 	};
 
-	app.all('/admin/publish/:alphaid', function(req, res, next) {
+	app.all('/admin/fbpublish/:alphaid', function(req, res, next) {
 		if (!req.session.user || req.session.user.level !== require('../modules/session')().USER_LEVEL_ADMIN) {
 			showDialogError(req, res, {message: 'Aqui no hay nada. ¡Venga fuera de aqui!'});
 			
 		} else {
 			require('../modules/linkprovider')(db).getLink(req.params.alphaid, function(err, link) {
-				var fb = require('../modules/facebook');
-
-				fb.accessToken('105797889471287', 'cc03e4f1e198f45214616aa73e62a39a',
-						function(err, accessToken) {
-					if (err) {
-						res.send(err);
-					} else {
-						
-						var post = {
-							name: link.name,
-							link: layout.urls.base+link.href,
-							caption: 'enviado por ',
-							message: ''
-						};
-						
-						if (link.submitter_type == 2) {
-							post.caption += link.username;
+				if (err) {
+					console.error(err);
+					showDialogError(req, res, {message: 'No encuentro el link'});
+				} else {
+					fb.publish(fb.makePost(layout.urls.base, layout.urls.static, link),
+							function(err, id) {
+						if (err) {
+							console.error(err);
+							showDialogError(req, res, {message: 'Error: '+err});
+							
 						} else {
-							post.caption += link.submitter;
+							db.updateLink(link.id, {'fbpost': id}, function(err) {
+								if (err) {
+									console.error(err);
+									showDialogError(req, res, {message: 'Error al actualizar db: '+err});
+									
+								} else {
+									showDialogInfo(req, res, {message: 'Publicado con facebook-post-id '+id})
+									console.log('published link '+link.alphaid+' to faceook with id '+id);
+								}
+							});
+							
 						}
-						//post.message += ' en '
-
-						if (link.video_site == 2) {
-							post.picture = layout.urls.static+'/img/videos/thumb_'+link.id+'.jpg';
-						}
-
-						fb.publish('acechador.es', post, function(err, id) {
-							if (err) {
-								res.send(err);
-							} else {
-								res.send('published: '+id);
-							}
-						});
-					}
-				});
+					});
+				}
 
 
 			});

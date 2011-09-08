@@ -48,7 +48,12 @@
 			{{/if}}
 			
 			{{if login}}{{if login.isAdmin}}
-			| <a class="admin" href="${urls.secure}/admin/delete/link/${link.id}">Eliminar</a>
+				| <a class="admin" href="${urls.secure}/admin/delete/link/${link.id}">Eliminar</a>
+				{{if !link.fbpost}}
+					| <a class="admin" href="${urls.secure}/admin/fbpublish/${link.alphaid}">Publicar en fb</a>
+				{{else}}
+					| <a class="admin" href="${urls.secure}/admin/fbunpublish/${link.alphaid}"><strike>Revocar de fb</strike></a>
+				{{/if}}
 			{{/if}}{{/if}}
 			
 			<span class="plusone" id="plusone-${link.id}"></span>

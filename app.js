@@ -53,7 +53,11 @@ var express = require('express')
 var app = express.createServer();
 var log4js = require('log4js');
 log4js.configure('log4js.json', {});
-
+var fb = require('./modules/facebook')({
+	appid: '105797889471287',
+	appsecret: 'cc03e4f1e198f45214616aa73e62a39a',
+	pageid: 'acechador.es'
+});
 
 process.on('uncaughtException', function (err) {
 	log4js.getLogger('console').fatal('Uncaught exception:', err);
@@ -187,7 +191,7 @@ var db = require('./modules/db')({
 			
 			require('./xhr/submit')(app, layout.session, db, layout.urls);
 			
-			require('./httpspages/admin')(app, layout, db);
+			require('./httpspages/admin')(app, layout, db, fb);
 			
 			require('./staticpages')(app, layout);
 			
