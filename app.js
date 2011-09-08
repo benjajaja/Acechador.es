@@ -217,6 +217,7 @@ var db = require('./modules/db')({
 		// log files should ne owned by user now if run as root
 		log4js.addAppender(log4js.fileAppender('./logs/log'), 'console');
 		log4js.addAppender(log4js.fileAppender('./logs/access'), 'access');
+		console.log('acechador.es succesfully started');
 	}
 );
 

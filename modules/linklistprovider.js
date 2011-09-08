@@ -12,7 +12,7 @@ module.exports = function(db) {
 					},
 					function(err, links) {
 				if (err) {
-					console.log(err);
+					console.error(err);
 					callback([], []);
 					return;
 				}
@@ -22,6 +22,7 @@ module.exports = function(db) {
 				var formatter = require('./timeformatter');
 				var getLinkData = function() {
 					links[index].antiquity = formatter.antiquity(links[index].timestamp);
+					links[index].href = '/r/'+links[index].category_ref+'/'+links[index].alphaid+'/'+links[index].ref;
 					db.getLinkCommentCount(links[index].id, function(err, comments) {
 						links[index].comments = {'length': comments[0].count};
 						if (links[index].fbpost) {
