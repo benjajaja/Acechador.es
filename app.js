@@ -173,11 +173,7 @@ var db = require('./modules/db')({
 		console.log('Express server listening on port %d', app.address().port);
 		
 		var cron = require('cron');
-		new cron.CronJob('0 0 11,23 * * *', require('./modules/cronjobs/facebook')(db, layout, {
-			appid: '105797889471287',
-			appsecret: 'cc03e4f1e198f45214616aa73e62a39a',
-			pageid: 'acechador.es'
-		}).run);
+		new cron.CronJob('0 0 11,23 * * *', require('./modules/cronjobs/facebook')(db, layout, fb).run);
 		
 		// secure server
 		(function() {
