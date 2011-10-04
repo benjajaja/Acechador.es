@@ -1,0 +1,26 @@
+{
+	"user": "acechadores",
+	"hosts": [
+		{
+			"domains": ["minecraft.acechadores.com"],
+			"address": "127.0.0.1:8080"
+		},
+		{
+			"domains": ["acechadores.com", "acechador.es"],
+			"app": {
+				"script": "acechadores",
+				"port": 8000,
+				"devport": 9000,
+				"secureport": 18000
+			}
+		},
+		{
+			"domains": ["restaurantedavinci.es", "davinci.acechadores.com"],
+			"app": {
+				"script": "cms/restaurantedavinci/app.js",
+				"port": 8001,
+				"devport": 9001
+			}
+		}
+	]
+}
