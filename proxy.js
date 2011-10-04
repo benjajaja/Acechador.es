@@ -26,7 +26,7 @@ fs.readFile('./proxy.json', function(err, data) {
 	data = JSON.parse(data);
 	
 	if (production) {
-		proxy.createServer({router: getRouterData(data.hosts)}).listen(80);
+		proxy.createServer({hostnameOnly: true, router: getRouterData(data.hosts)}).listen(80);
 		console.log('proxy listening on port 80');
 		
 		var httpsOptions = (function() {
@@ -116,6 +116,10 @@ function startScripts(hosts, production) {
 					console.error(args[0]+' exited.');
 				}
 				// TODO: restart?
+			});
+			
+			process.on('exit', function() {
+				child.kill();
 			});
 		}
 	}
