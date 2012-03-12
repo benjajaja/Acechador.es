@@ -50,7 +50,7 @@ module.exports = function(options, db) {
 		
 		res.render('index', globals(req, data), function(err, data) {
 			if (err) {
-				res.render('error', {error: err});
+				res.render('error', {error: err.toString()});
 				console.log(err.toString(), err.stack);
 				return;
 			}

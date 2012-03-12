@@ -42,15 +42,15 @@ fs.readFile('./proxy.json', function(err, data) {
 				(function() {
 					var sslproxy = new proxy.HttpProxy({
 					  target: {
-						https: true
+					    host: 'localhost',//data.hosts[i].domains[0],
+					    https: true,
+					    port: data.hosts[i].app.secureport
 					  }
 					});
 					https.createServer(httpsOptions, function (req, res) {
-						sslproxy.proxyRequest(req, res, {
-							host: 'localhost', 
-							port: data.hosts[i].app.secureport
-						});
+						sslproxy.proxyRequest(req, res);
 					}).listen(443);
+					console.log('https proxy from 443 to '+data.hosts[i].app.secureport);
 				})();
 				break;
 			}

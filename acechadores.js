@@ -66,7 +66,7 @@ log4js.addAppender(log4js.fileAppender('./logs/access'), 'access');
 
 
 
-	var express = require('express')
+	var express = require('express');
 	var app = express.createServer();
 	
 	var fb = require('./modules/facebook')({
@@ -87,11 +87,12 @@ log4js.addAppender(log4js.fileAppender('./logs/access'), 'access');
 			app.use(express.bodyParser());
 			app.use(express.cookieParser());
 			
-			var FileStore = require('filestore').FileStore;
+			//var FileStore = require('filestore').FileStore;
+			//var FSStore = require('connect-fs')(express);
 			app.use(express.session({
 				secret: "la bandica gestiona fuerte",
-				store: new FileStore(__dirname + '/sessions'),
-				
+				//store: new FileStore(__dirname + '/sessions'),
+				//store: new FSStore(),
 			}));
 			express.session.ignore.push('/robots.txt');
 			express.session.ignore.push('/rss.xml');

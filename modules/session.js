@@ -24,10 +24,12 @@ var getHash = function(name, password) {
 };
 
 var sha1 = function(string) {
-	require('joose');
+	var sha1 = require('sha1');
+	return sha1(string);
+	/*require('joose');
 	require('joosex-namespace-depended');
 	require('hash');
-	return Hash.sha1(string);
+	return Hash.sha1(string);*/
 };
 
 var login = function(name, password, keep, isHashed, req, callback) {
